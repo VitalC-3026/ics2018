@@ -92,30 +92,39 @@ static int cmd_help(char *args) {
 }
 
 static int cmd_si(char* args) {
-  printf("%s\n", args);
   char* arg = strtok(args, " ");
-  printf("%s\n", args);
   if (arg == NULL) {
     cpu_exec(1);
     printf("si 1 OK!\n");
   }
   else {
-    char* subtoken = strtok(NULL, " ");
-    printf("%s\n", subtoken);
-    if (subtoken != NULL) {
-      printf("Too many arguments.\n");
-      return 1;  
-    } else {
-      int num = atoi(arg);
-      cpu_exec(num);
-      printf("si %d OK!\n", num);
-    }
+    int num = atoi(arg);
+    cpu_exec(num);
+    printf("si %d OK!\n", num);
   }
   return 0;
 }
 
 static int cmd_info(char* args) {
-  
+  char* arg = strtok(args, " ");
+  if (arg == NULL) {
+    printf("Too few arguments.\n");
+  }
+  else {
+    if (strcmp(arg, "r") == 0) {
+      printf("eax: 0x%08x.\n", cpu.eax);
+      printf("ecx: 0x%08x.\n", cpu.ecx);
+      printf("edx: 0x%08x.\n", cpu.edx);
+      printf("ebx: 0x%08x.\n", cpu.ebx);
+      printf("esp: 0x%08x.\n", cpu.esp);
+      printf("ebp: 0x%08x.\n", cpu.ebp);
+      printf("esi: 0x%08x.\n", cpu.esi);
+      printf("edi: 0x%08x.\n", cpu.edi);
+    }
+    else if (strcmp(arg, "w") == 0) {
+      printf("watchpoints.\n");
+    }
+  }
   return 0;
 }
 
