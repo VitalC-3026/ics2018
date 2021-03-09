@@ -94,13 +94,13 @@ static int cmd_help(char *args) {
 static int cmd_si(char* args) {
   printf("%s\n", args);
   char* arg = strtok(args, " ");
-  printf("%s\n", arg);
+  printf("%s\n", args);
   if (arg == NULL) {
     cpu_exec(1);
     printf("si 1 OK!\n");
   }
   else {
-    char* subtoken = strtok(arg, " ");
+    char* subtoken = strtok(NULL, " ");
     printf("%s\n", subtoken);
     if (subtoken != NULL) {
       printf("Too many arguments.\n");
