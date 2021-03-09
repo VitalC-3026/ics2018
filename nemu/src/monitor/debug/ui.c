@@ -99,6 +99,7 @@ static int cmd_si(char* args) {
   }
   else {
     char* subtoken = strtok(arg, " ");
+    printf("%s\n", subtoken);
     if (subtoken != NULL) {
       printf("Too many arguments.\n");
       return 1;  
