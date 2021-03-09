@@ -38,6 +38,18 @@ static int cmd_q(char *args) {
 
 static int cmd_help(char *args);
 
+static int cmd_si(char *args); // single step to debug
+
+static int cmd_info(char *args); // print info, r: registers, w: watchpoints
+
+// static int cmd_p(char *args); // calculate for the expression
+
+static int cmd_x(char *args); // scan the internal storage
+
+// static int cmd_w(char *args); // set watchpoints
+
+// static int cmd_d(char *args); // delete watchpoints
+
 static struct {
   char *name;
   char *description;
@@ -48,7 +60,10 @@ static struct {
   { "q", "Exit NEMU", cmd_q },
 
   /* TODO: Add more commands */
-
+  {"si", "Single-step execution", cmd_si },
+  {"info", "Print the states of registers or the information of watchpoints", cmd_info },
+  // {"p", "Compute the result of an expression", cmd_p},
+  {"x", "Scan the memory", cmd_x },
 };
 
 #define NR_CMD (sizeof(cmd_table) / sizeof(cmd_table[0]))
@@ -75,6 +90,31 @@ static int cmd_help(char *args) {
   }
   return 0;
 }
+
+static int cmd_si(char* args) {
+  char* arg = strtok(args, " ");
+  if (arg == NULL) {
+    cpu_exec(1);
+    printf("si 1 OK!\n");
+  }
+  else {
+    int num = atoi(arg);
+    cpu_exec(num);
+    printf("si %d  OK!\n", num);
+  }
+  return 0;
+}
+
+static int cmd_info(char* args) {
+  
+  return 0;
+}
+
+static int cmd_x(char* args) {
+  // char* arg = strtok(args, " ");
+  return 0;
+}
+
 
 void ui_mainloop(int is_batch_mode) {
   if (is_batch_mode) {
