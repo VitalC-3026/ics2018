@@ -92,7 +92,9 @@ static int cmd_help(char *args) {
 }
 
 static int cmd_si(char* args) {
+  printf("%s\n", args);
   char* arg = strtok(args, " ");
+  printf("%s\n", arg);
   if (arg == NULL) {
     cpu_exec(1);
     printf("si 1 OK!\n");
