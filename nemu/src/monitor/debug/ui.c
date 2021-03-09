@@ -98,9 +98,15 @@ static int cmd_si(char* args) {
     printf("si 1 OK!\n");
   }
   else {
-    int num = atoi(arg);
-    cpu_exec(num);
-    printf("si %d  OK!\n", num);
+    char* subtoken = strtok(arg, " ");
+    if (subtoken != NULL) {
+      printf("Too many arguments.\n");
+      return 1;  
+    } else {
+      int num = atoi(arg);
+      cpu_exec(num);
+      printf("si %d OK!\n", num);
+    }
   }
   return 0;
 }
