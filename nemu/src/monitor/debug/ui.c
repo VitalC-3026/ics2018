@@ -99,6 +99,10 @@ static int cmd_si(char* args) {
   }
   else {
     int num = atoi(arg);
+    if (strtok(NULL, " ") != NULL) {
+      printf("Too many arguments!\n");
+      return 0;
+    }
     cpu_exec(num);
     printf("si %d OK!\n", num);
   }
