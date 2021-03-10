@@ -137,7 +137,7 @@ static int cmd_x(char* args) {
   if (arg == NULL) {
     printf("Too few arguments!\n");
   }
-  // int num = atoi(arg);
+  int num = atoi(arg);
   arg = strtok(NULL, " ");
   if (arg == NULL) {
     printf("Too few arguments!\n");
@@ -148,6 +148,17 @@ static int cmd_x(char* args) {
   }
   if (arg[0] != '0' || arg[1] != 'x') {
     printf("Unknown address!\n");
+  }
+  char* str;
+  vaddr_t vaddr;
+  vaddr = strtol(arg, &str, 16); // get the virtual address from the command line
+  for(int i = 0; i < num; i++) {
+    uint32_t data = vaddr_read(vaddr + 4 * i, 4);
+    printf("0x%08x ", vaddr + 4 * i);
+    for(int j = 0; j < 4; j++) {
+      printf("0x%02x ", data & 0xff);
+      data = data >> 8;
+    } 
   }
   return 0;
 }
