@@ -133,7 +133,11 @@ static int cmd_info(char* args) {
 }
 
 static int cmd_x(char* args) {
-  // char* arg = strtok(args, " ");
+  char* arg = strtok(args, " ");
+  int num = atoi(arg);
+  arg = strtok(NULL, " ");
+  printf("%d\n", num);
+  printf("%c\t%c\t%c\t%c\n", arg[strlen(arg)-1], arg[strlen(arg)-2], arg[0], arg[1]);
   return 0;
 }
 
