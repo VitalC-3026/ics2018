@@ -134,10 +134,21 @@ static int cmd_info(char* args) {
 
 static int cmd_x(char* args) {
   char* arg = strtok(args, " ");
-  int num = atoi(arg);
+  if (arg == NULL) {
+    printf("Too few arguments!\n");
+  }
+  // int num = atoi(arg);
   arg = strtok(NULL, " ");
-  printf("%d\n", num);
-  printf("%c\t%c\t%c\t%c\n", arg[strlen(arg)-1], arg[strlen(arg)-2], arg[0], arg[1]);
+  if (arg == NULL) {
+    printf("Too few arguments!\n");
+    return 0;
+  }
+  if (strtok(NULL, " ") != NULL) {
+    printf("Too many arguments!\n");
+  }
+  if (arg[0] != '0' || arg[1] != 'x') {
+    printf("Unknown address!\n");
+  }
   return 0;
 }
 
