@@ -155,10 +155,11 @@ static int cmd_x(char* args) {
   for(int i = 0; i < num; i++) {
     uint32_t data = vaddr_read(vaddr + 4 * i, 4);
     printf("0x%08x ", vaddr + 4 * i);
-    for(int j = 0; j < 4; j++) {
+    for(int j = 0; j < 3; j++) {
       printf("0x%02x ", data & 0xff);
       data = data >> 8;
-    } 
+    }
+    printf("0x%02x\n", data & 0xff);
   }
   return 0;
 }
