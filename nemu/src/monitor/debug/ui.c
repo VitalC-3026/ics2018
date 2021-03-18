@@ -42,7 +42,7 @@ static int cmd_si(char *args); // single step to debug
 
 static int cmd_info(char *args); // print info, r: registers, w: watchpoints
 
-// static int cmd_p(char *args); // calculate for the expression
+static int cmd_p(char *args); // calculate for the expression
 
 static int cmd_x(char *args); // scan the internal storage
 
@@ -62,7 +62,7 @@ static struct {
   /* TODO: Add more commands */
   {"si", "Single-step execution", cmd_si },
   {"info", "Print the states of registers or the information of watchpoints", cmd_info },
-  // {"p", "Compute the result of an expression", cmd_p},
+  {"p", "Compute the result of an expression", cmd_p},
   {"x", "Scan the memory", cmd_x },
 };
 
@@ -95,7 +95,7 @@ static int cmd_si(char* args) {
   char* arg = strtok(args, " ");
   if (arg == NULL) {
     cpu_exec(1);
-    printf("si 1 OK!\n");
+    // printf("si 1 OK!\n");
   }
   else {
     int num = atoi(arg);
@@ -104,7 +104,7 @@ static int cmd_si(char* args) {
       return 0;
     }
     cpu_exec(num);
-    printf("si %d OK!\n", num);
+    // printf("si %d OK!\n", num);
   }
   return 0;
 }
@@ -115,6 +115,10 @@ static int cmd_info(char* args) {
     printf("Too few arguments.\n");
   }
   else {
+    if (strtok(NULL, " ") != NULL) {
+      printf("Too many arguments.\n");
+      return 0;
+    }
     if (strcmp(arg, "r") == 0) {
       printf("eax: 0x%08x.\n", cpu.eax);
       printf("ecx: 0x%08x.\n", cpu.ecx);
@@ -145,9 +149,11 @@ static int cmd_x(char* args) {
   }
   if (strtok(NULL, " ") != NULL) {
     printf("Too many arguments!\n");
+    return 0;
   }
   if (arg[0] != '0' || arg[1] != 'x') {
     printf("Unknown address!\n");
+    return 0;
   }
   char* str;
   vaddr_t vaddr;
@@ -164,6 +170,23 @@ static int cmd_x(char* args) {
   return 0;
 }
 
+static int cmd_p(char* args) {
+  char* arg = strtok(args, " ");
+  if (arg == NULL) {
+    printf("Too few arguments!\n");
+    return 0;
+  }
+  if (strtok(NULL, " ") != NULL) {
+    printf("Too many arguments!\n");
+    return 0;
+  }
+  bool success;
+  int res = expr(arg, &success);
+  if(success) {
+    printf("res = %d\n", res);
+  }
+  return 0;
+}
 
 void ui_mainloop(int is_batch_mode) {
   if (is_batch_mode) {
