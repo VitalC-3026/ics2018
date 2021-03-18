@@ -322,7 +322,7 @@ int evaluate(int p, int q) {
     /*
       Single token, must be a number.
     */
-   printf("token: %d, value: %s", p, tokens[p].str);
+   printf("token_idx: %d, value: %s.\n", p, tokens[p].str);
     return atoi(tokens[p].str);
   }
   else if (check_parentheses(p, q)) {
