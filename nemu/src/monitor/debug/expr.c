@@ -178,12 +178,14 @@ bool check_parentheses(int p, int q) {
   int t = p + 1;
   int count = 0;
   while(t < q) {
+    printf("token_location: %d, token_value: %s.\n", t, tokens[t].str);
     if (tokens[t].type == TK_LP) {
       count++;
     }
     else if (tokens[t].type == TK_RP) {
       count--;
     }
+    t++;
   }
   if (count != 0) {
     return false;
