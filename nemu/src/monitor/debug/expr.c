@@ -172,7 +172,7 @@ static bool make_token(char *e) {
 
 // TODO: distinguish (2*3))+4 false / (2+3)*(5-9) false => can be computed
 bool check_parentheses(int p, int q) {
-  printf("start check_parenthese\n");
+  printf("p:%d, q:%d, tokens:%d\n", p, q, nr_token);
   if (tokens[p].type != TK_LP || tokens[q].type != TK_RP) {
     return false;
   }
