@@ -172,16 +172,17 @@ static bool make_token(char *e) {
 
 // TODO: distinguish (2*3))+4 false / (2+3)*(5-9) false => can be computed
 bool check_parentheses(int p, int q) {
-  printf("p:%d, q:%d, tokens:%d\n", p, q, nr_token);
-  printf("tokens[%d].type: %d\n", p, tokens[p].type);
-  printf("tokens[%d].type: %d\n", q, tokens[q].type);
+  // printf("p:%d, q:%d, tokens:%d\n", p, q, nr_token);
+  // printf("tokens[%d].type: %d\n", p, tokens[p].type);
+  // printf("tokens[%d].type: %d\n", q, tokens[q].type);
   if (tokens[p].type != TK_LP || tokens[q].type != TK_RP) {
+    printf("check_parentheses failed\n");
     return false;
   }
   int t = p + 1;
   int count = 0;
   while(t < q) {
-    printf("token_location: %d, token_value: %s.\n", t, tokens[t].str);
+    // printf("token_location: %d, token_value: %s.\n", t, tokens[t].str);
     if (tokens[t].type == TK_LP) {
       count++;
     }
