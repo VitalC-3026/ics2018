@@ -329,14 +329,15 @@ int evaluate(int p, int q) {
     /*
       Single token, must be a number.
     */
-   printf("token_idx: %d, value: %s.\n", p, tokens[p].str);
+    printf("token_idx: %d, value: %s.\n", p, tokens[p].str);
     return atoi(tokens[p].str);
   }
-  else if (check_parentheses(p, q) == true) {
+  else if (check_parentheses(p, q)) {
     printf("check_parenthese = true\n");
     return evaluate(p + 1, q - 1);
   }
   else {
+    printf("evaluate here\n");
     int op = find_operator(p, q);
     int val1 = evaluate(p, op - 1);
     int val2 = evaluate(op + 1, q);
