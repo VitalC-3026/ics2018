@@ -148,7 +148,7 @@ static bool make_token(char *e) {
             t.type = TK_NUM;
             int j;
             for (j = 0; j < substr_len; j++) {
-              t.str[j] = *(substr_start + i);
+              t.str[j] = *(substr_start + j);
             }
             t.str[j] = '\0';
             tokens[nr_token] = t;
