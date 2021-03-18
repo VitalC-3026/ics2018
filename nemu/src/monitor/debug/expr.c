@@ -307,6 +307,7 @@ int find_operator(int p, int q) {
       }
       count = tmp - 1;
     }
+    t++;
   }
   free(stack);
   return loc;
@@ -321,6 +322,7 @@ int evaluate(int p, int q) {
     /*
       Single token, must be a number.
     */
+   printf("token: %d, value: %s", p, tokens[p].str);
     return atoi(tokens[p].str);
   }
   else if (check_parentheses(p, q)) {
