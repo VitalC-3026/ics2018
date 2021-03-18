@@ -195,6 +195,7 @@ bool check_parentheses(int p, int q) {
 }
 
 int find_operator(int p, int q) {
+  printf("find_operator from %d to %d", p, q);
   int len = (q - p) + 1;
   int * stack = malloc(sizeof(int) * len);
   memset(stack, 0, len);
@@ -328,7 +329,7 @@ int evaluate(int p, int q) {
    printf("token_idx: %d, value: %s.\n", p, tokens[p].str);
     return atoi(tokens[p].str);
   }
-  else if (check_parentheses(p, q)) {
+  else if (check_parentheses(p, q) == true) {
     return evaluate(p + 1, q - 1);
   }
   else {
