@@ -28,8 +28,8 @@ static struct rule {
   {"-", TK_MIN},           // minus
   {"\\*", TK_MUL},         // multiply
   {"/", TK_DIV},           // divide
-  {"(", TK_LP},         // (
-  {")", TK_RP},         // )
+  {"\\(", TK_LP},         // (
+  {"\\)", TK_RP},         // )
   {"[1-9][0-9]* | 0", TK_NUM}, // decimal
   {"==", TK_EQ}         // equal
 };
