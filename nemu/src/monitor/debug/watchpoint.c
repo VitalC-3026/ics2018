@@ -27,8 +27,8 @@ WP* new_wp() {
   }
   if (current == NULL) {
     printf("head null\n");
-    current = &free_[0];
-    free_ = free_[0].next;
+    current = free_;
+    free_ = free_->next;
     current->next = NULL;
     current->used = true;
     return current;
@@ -37,8 +37,8 @@ WP* new_wp() {
     while(current->next != NULL) {
       current = current->next;
     }
-    current->next = &free_[0];
-    free_ = free_[0].next;
+    current->next = free_;
+    free_ = free_->next;
     current->next->next = NULL;
     current->next->used = true;
     return current->next;
