@@ -92,9 +92,8 @@ void free_wp(int no) {
 
 void show_wp() {
   WP* curr = head;
-  printf("               expr\tvalue\n");
   while (curr != NULL) {
-    printf("watchpoint %d: %s\t%d\n", curr->NO, curr->expr, curr->value);
+    printf("%d:\t%s\t\t%d\n", curr->NO, curr->expr, curr->value);
     curr = curr->next;
   }
 }
