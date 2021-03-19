@@ -26,6 +26,7 @@ WP* new_wp() {
     return NULL;
   }
   if (current == NULL) {
+    printf("head null\n");
     current = &free_[0];
     free_ = free_[0].next;
     current->next = NULL;
