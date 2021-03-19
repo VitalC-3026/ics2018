@@ -287,14 +287,12 @@ int find_operator(int p, int q) {
   int t = p;
   int count = 0;
   int loc = p;
-  printf("%d, %d, %d\n", t, q, len);
   // restriction: count < len
   while(t <= q && count <= len) {
     if(tokens[t].type == TK_ADD || tokens[t].type == TK_MIN) {
       if(count == 0) {
         stack[count] = tokens[t].type;
         loc = t;
-        printf("%d\n", loc);
         count++;
       }
       else {
