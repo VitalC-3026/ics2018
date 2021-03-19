@@ -24,9 +24,8 @@ static struct rule {
   /* TODO: Add more rules.
    * Pay attention to the precedence level of different rules.
    */
-
-  {"[1-9][0-9]*|0", TK_DEC}, // decimal
   {"0x[0-9a-fA-F]+", TK_HEX}, // hexadecimal
+  {"[1-9][0-9]*|0", TK_DEC}, // decimal
   {"$e[a-d]x|$esp|$ebp|$esi|$edi|$eip", TK_REG}, // register
   {" +", TK_NOTYPE},    // spaces
   {"\\+", TK_ADD},      // plus
