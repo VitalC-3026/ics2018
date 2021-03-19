@@ -1,5 +1,6 @@
 #include "monitor/watchpoint.h"
 #include "monitor/expr.h"
+#include <stdlib.h>
 
 #define NR_WP 32
 
@@ -60,6 +61,7 @@ void free_wp(int no) {
   curr_head->next = curr_head->next->next;
   if(free_ == NULL) {
     tmp->next = NULL;
+    free(tmp->expr);
     tmp->used = false;
     free_ = tmp;
   }
@@ -69,16 +71,19 @@ void free_wp(int no) {
     }
     if (curr_free->next == NULL && curr_free->NO < no) {
       tmp->used = false;
+      free(tmp->expr);
       tmp->next = NULL;
       curr_free->next = tmp;
     }
     else if (curr_free->next == NULL && curr_free->NO > no) {
       tmp->next = curr_free;
+      free(tmp->expr);
       tmp->used = false;
       free_ = tmp;
     }
     else {
       tmp->next = curr_free->next;
+      free(tmp->expr);
       tmp->used = false;
       curr_free->next = tmp;
     }
