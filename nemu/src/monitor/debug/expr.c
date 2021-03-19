@@ -27,18 +27,18 @@ static struct rule {
   {"0x[0-9a-fA-F]+", TK_HEX}, // hexadecimal
   {"[1-9][0-9]*|0", TK_DEC}, // decimal
   {"\\$e[a-d]x|\\$esp|\\$ebp|\\$esi|\\$edi|\\$eip", TK_REG}, // register
-  {" +", TK_NOTYPE},    // spaces
   {"\\+", TK_ADD},      // plus
   {"-", TK_MIN},        // minus
   {"\\*", TK_MUL},      // multiply
   {"/", TK_DIV},        // divide
   {"\\(", TK_LP},       // (
   {"\\)", TK_RP},       // )
-  {"==", TK_EQ},        // equal
   {"!=", TK_NEQ},       // not equal
+  {"==", TK_EQ},        // equal
   {"&&", TK_AND},       // and
   {"\\|\\|", TK_OR},        // or
   {"!", TK_NOT},        // not
+  {" +", TK_NOTYPE},    // spaces
 };
 
 #define NR_REGEX (sizeof(rules) / sizeof(rules[0]) )
@@ -160,6 +160,79 @@ static bool make_token(char *e) {
             t.str[j] = '\0';
             tokens[nr_token] = t;
             nr_token++;
+            break;
+          }
+          case TK_HEX: {
+            Token t;
+            t.type = TK_HEX;
+            int j;
+            for (j = 0; j < substr_len; j++) {
+              t.str[j] = *(substr_start + j);
+            }
+            t.str[j] = '\0';
+            tokens[nr_token] = t;
+            nr_token++;
+            break;
+          }
+          case TK_REG: {
+            Token t;
+            t.type = TK_REG;
+            int j;
+            for (j = 0; j < substr_len; j++) {
+              t.str[j] = *(substr_start + j);
+            }
+            t.str[j] = '\0';
+            tokens[nr_token] = t;
+            nr_token++;
+            break;
+          }
+          case TK_NOT: {
+            Token t;
+            t.type = TK_NOT;
+            t.str[0] = '!';
+            t.str[1] = '\0';
+            tokens[nr_token] = t;
+            nr_token += 1;
+            break;
+          }
+          case TK_EQ: {
+            Token t;
+            t.type = TK_EQ;
+            t.str[0] = '=';
+            t.str[1] = '=';
+            t.str[2] = '\0';
+            tokens[nr_token] = t;
+            nr_token += 1;
+            break;
+          }
+          case TK_NEQ: {
+            Token t;
+            t.type = TK_NEQ;
+            t.str[0] = '!';
+            t.str[1] = '=';
+            t.str[2] = '\0';
+            tokens[nr_token] = t;
+            nr_token += 1;
+            break;
+          }
+          case TK_AND: {
+            Token t;
+            t.type = TK_AND;
+            t.str[0] = '&';
+            t.str[1] = '&';
+            t.str[2] = '\0';
+            tokens[nr_token] = t;
+            nr_token += 1;
+            break;
+          }
+          case TK_OR: {
+            Token t;
+            t.type = TK_EQ;
+            t.str[0] = '|';
+            t.str[1] = '|';
+            t.str[2] = '\0';
+            tokens[nr_token] = t;
+            nr_token += 1;
             break;
           }
           default: TODO();
@@ -306,22 +379,23 @@ int find_operator(int p, int q) {
       }
     }
     else if (tokens[t].type == TK_LP) {
-      stack[count] = TK_LP;
-      count++;
-    }
-    else if (tokens[t].type == TK_RP) {
-      if(count == 0) {
-        printf("impossible to reach here! THe first character of the string is RP.\n");
+      int tmp = t;
+      while(tmp < q && tokens[tmp].type != TK_RP) {
+        tmp++;
       }
-      int tmp = count;
-      while(stack[tmp] != TK_LP && tmp >= 0) {
-        stack[tmp] = 0;
-        tmp--;
-      }
-      if (tmp < 0) {
+      if (tmp == q && tokens[tmp].type != TK_RP) {
         printf("impossible to reach here! Incompatible parentheses.\n");
       }
-      count = tmp - 1;
+      else if (tokens[tmp].type == TK_RP){
+         t = tmp + 1;
+      }
+      
+    }
+    else if (tokens[t].type == TK_RP) {
+      printf("impossible to reach here! RP should have already been eliminated.\n");
+    }
+    else if (tokens[t].type == TK_NOT) {
+
     }
     t++;
   }

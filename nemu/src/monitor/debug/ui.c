@@ -46,9 +46,9 @@ static int cmd_p(char *args); // calculate for the expression
 
 static int cmd_x(char *args); // scan the internal storage
 
-// static int cmd_w(char *args); // set watchpoints
+static int cmd_w(char *args); // set watchpoints
 
-// static int cmd_d(char *args); // delete watchpoints
+static int cmd_d(char *args); // delete watchpoints
 
 static struct {
   char *name;
@@ -61,9 +61,11 @@ static struct {
 
   /* TODO: Add more commands */
   {"si", "Single-step execution", cmd_si },
-  {"info", "Print the states of registers or the information of watchpoints", cmd_info },
+  {"info", "Print information of registers or watchpoints", cmd_info },
   {"p", "Compute the result of an expression", cmd_p},
   {"x", "Scan the memory", cmd_x },
+  {"w", "Set watchpoints", cmd_w},
+  {"d", "Delete watchpoints", cmd_d}
 };
 
 #define NR_CMD (sizeof(cmd_table) / sizeof(cmd_table[0]))
@@ -131,6 +133,8 @@ static int cmd_info(char* args) {
     }
     else if (strcmp(arg, "w") == 0) {
       printf("watchpoints.\n");
+      show_wp();
+      
     }
   }
   return 0;
@@ -176,15 +180,54 @@ static int cmd_p(char* args) {
     printf("Too few arguments!\n");
     return 0;
   }
-  if (strtok(NULL, " ") != NULL) {
-    printf("Too many arguments!\n");
-    return 0;
+  char* sub = strtok(NULL, " ");
+  while (sub != NULL) {
+    strcat(arg, sub);
   }
   bool success;
   int res = expr(arg, &success);
   if(success) {
     printf("res = %d\n", res);
   }
+  return 0;
+}
+
+static int cmd_w(char* args) {
+  char* arg = strtok(args, " ");
+  if (arg == NULL) {
+    printf("Too few arguments!\n");
+    return 0;
+  }
+  if (strtok(NULL, " ") != NULL) {
+    printf("Too many arguments!\n");
+    return 0;
+  }
+  return 0;
+}
+
+static int cmd_d(char* args) {
+  char* arg = strtok(args, " ");
+  if(arg == NULL) {
+    printf("Too few arguments.\n");
+    return 0;
+  }
+  if(strtok(NULL, " ") != NULL) {
+    printf("Too many arguments.\n");
+    return 0;
+  }
+  for(int i = 0; i < strlen(arg); i++) {
+    if (arg[i] > '9' || arg[i] < '0') {
+      printf("Invalid expression.\n");
+      return 0;
+    }
+  }
+  int n = atoi(arg);
+  if (n >= 32) {
+    printf("Only 32 watchpoints(No: 0-31) provided.\n");
+    return 0;
+  }
+  free_wp(n);
+  printf("Successfully delete watchpoint %d.\n", n);
   return 0;
 }
 
