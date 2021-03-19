@@ -132,9 +132,7 @@ static int cmd_info(char* args) {
       printf("edi: 0x%08x.\n", cpu.edi);
     }
     else if (strcmp(arg, "w") == 0) {
-      printf("watchpoints.\n");
       show_wp();
-      
     }
   }
   return 0;

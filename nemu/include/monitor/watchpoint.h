@@ -17,5 +17,6 @@ void init_wp_pool();
 WP* new_wp();
 void free_wp(int);
 void show_wp();
+bool check_wp();
 
 #endif

@@ -92,8 +92,34 @@ void free_wp(int no) {
 
 void show_wp() {
   WP* curr = head;
+  if (head == NULL) {
+    printf("No watchpoints.\n");
+  }
+  else {
+    printf("Watchpoints.\n");
+  }
   while (curr != NULL) {
     printf("%d:\t%s\t\t%d\n", curr->NO, curr->expr, curr->value);
     curr = curr->next;
+  }
+}
+
+bool check_wp(){
+  WP* curr = head;
+  if(head == NULL) {
+    return true;
+  }
+  else {
+    bool success = false;
+    bool flag = false;
+    while(curr != NULL) {
+      int val = expr(curr->expr, &success);
+      if (val != curr->value) {
+        flag = true;
+        printf("%d:\t%s\tchanges from\t%d\tto\t%d.\n", curr->NO, curr->expr, curr->value, val);
+        curr->value = val;
+      }
+    }
+    return flag;
   }
 }
