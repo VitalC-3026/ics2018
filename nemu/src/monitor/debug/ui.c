@@ -199,10 +199,16 @@ static int cmd_w(char* args) {
     printf("Too few arguments!\n");
     return 0;
   }
-  if (strtok(NULL, " ") != NULL) {
-    printf("Too many arguments!\n");
-    return 0;
+  char* sub = strtok(NULL, " ");
+  while (sub != NULL) {
+    strcat(arg, sub);
+    sub = strtok(NULL, " ");
   }
+  bool success;
+  WP* wp = new_wp();
+  strcpy(wp->expr, args);
+  wp->value = expr(arg, &success);
+  printf("Set a watchpoint %d on %s", wp->NO, wp->expr);
   return 0;
 }
 
