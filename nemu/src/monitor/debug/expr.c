@@ -6,6 +6,7 @@
 #include <sys/types.h>
 #include <regex.h>
 #include <stdlib.h>
+#include <string.h>
 
 enum {
   TK_NOTYPE = 256, TK_EQ, 
