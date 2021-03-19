@@ -306,7 +306,7 @@ int find_operator(int p, int q) {
         printf("impossible to reach here! THe first character of the string is RP.\n");
       }
       int tmp = count;
-      while(stack[tmp] != TK_LP || tmp >= 0) {
+      while(stack[tmp] != TK_LP && tmp >= 0) {
         stack[tmp] = 0;
         tmp--;
       }
