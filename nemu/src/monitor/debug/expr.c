@@ -200,7 +200,7 @@ bool check_parentheses(int p, int q) {
 int find_operator(int p, int q) {
   printf("find_operator from %d to %d", p, q);
   int len = (q - p) + 1;
-  int * stack = malloc(sizeof(int) * len);
+  int * stack = (int*)malloc(sizeof(int) * len);
   memset(stack, 0, len);
   int t = p;
   int count = 0;
@@ -338,6 +338,7 @@ int evaluate(int p, int q) {
   }
   else {
     printf("evaluate here\n");
+    printf("%d, %d\n", p, q);
     int op = find_operator(p, q);
     int val1 = evaluate(p, op - 1);
     int val2 = evaluate(op + 1, q);
