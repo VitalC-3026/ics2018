@@ -29,7 +29,7 @@ WP* new_wp() {
   if (head == NULL) {
     head = free_;
     free_ = free_->next;
-    //head->next = NULL;
+    head->next = NULL;
     head->used = true;
     return head;
   }
