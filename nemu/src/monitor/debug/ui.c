@@ -206,6 +206,7 @@ static int cmd_w(char* args) {
   }
   bool success;
   WP* wp = new_wp();
+  printf("%d\n", wp->NO);
   strcpy(wp->expr, args);
   printf("%s\n", wp->expr);
   wp->value = expr(arg, &success);
