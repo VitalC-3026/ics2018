@@ -26,7 +26,7 @@ static struct rule {
    */
   {"0x[0-9a-fA-F]+", TK_HEX}, // hexadecimal
   {"[1-9][0-9]*|0", TK_DEC}, // decimal
-  {"$e[a-d]x|$esp|$ebp|$esi|$edi|$eip", TK_REG}, // register
+  {"\\$e[a-d]x|\\$esp|\\$ebp|\\$esi|\\$edi|\\$eip", TK_REG}, // register
   {" +", TK_NOTYPE},    // spaces
   {"\\+", TK_ADD},      // plus
   {"-", TK_MIN},        // minus
