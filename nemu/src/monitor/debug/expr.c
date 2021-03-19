@@ -201,8 +201,8 @@ bool check_parentheses(int p, int q) {
 int find_operator(int p, int q) {
   printf("find_operator from %d to %d", p, q);
   int len = (q - p) + 1;
-  int * stack = (int*)malloc(sizeof(int) * len);
-  memset(stack, 0, len);
+  int* stack = (int*) malloc(sizeof(int)*len);
+  memset(stack, 0, sizeof(int)*len);
   int t = p;
   int count = 0;
   int loc = p;
