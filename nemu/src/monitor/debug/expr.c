@@ -280,7 +280,7 @@ bool check_parentheses(int p, int q) {
 }
 
 int find_operator(int p, int q) {
-  printf("find_operator from %d to %d", p, q);
+  printf("find_operator from %d to %d\n", p, q);
   int len = (q - p) + 1;
   int* stack = (int*) malloc(sizeof(int)*len);
   memset(stack, 0, sizeof(int)*len);
@@ -293,6 +293,7 @@ int find_operator(int p, int q) {
       if(count == 0) {
         stack[count] = tokens[t].type;
         loc = t;
+        printf("%d\n", loc);
         count++;
       }
       else {
@@ -395,7 +396,6 @@ int find_operator(int p, int q) {
       printf("impossible to reach here! RP should have already been eliminated.\n");
     }
     else if (tokens[t].type == TK_NOT) {
-
     }
     t++;
   }
