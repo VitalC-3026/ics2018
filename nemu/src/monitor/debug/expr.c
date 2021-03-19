@@ -9,10 +9,11 @@
 #include <string.h>
 
 enum {
-  TK_NOTYPE = 256, TK_EQ, 
+  TK_NOTYPE = 256, TK_EQ, TK_NEQ,
   /* TODO: Add more token types */
   TK_ADD, TK_MIN, TK_MUL, TK_DIV,
-  TK_LP, TK_RP, TK_NUM
+  TK_LP, TK_RP, TK_DEC, TK_HEX, TK_REG,
+  TK_AND, TK_OR, TK_NOT
 };
 
 static struct rule {
@@ -24,15 +25,21 @@ static struct rule {
    * Pay attention to the precedence level of different rules.
    */
 
+  {"[1-9][0-9]*|0", TK_DEC}, // decimal
+  {"0x[0-9a-fA-F]+", TK_HEX}, // hexadecimal
+  {"$e[a-d]x|$esp|$ebp|$esi|$edi|$eip", TK_REG}, // register
   {" +", TK_NOTYPE},    // spaces
-  {"\\+", TK_ADD},         // plus
-  {"-", TK_MIN},           // minus
-  {"\\*", TK_MUL},         // multiply
-  {"/", TK_DIV},           // divide
-  {"\\(", TK_LP},         // (
-  {"\\)", TK_RP},         // )
-  {"[1-9][0-9]*|0", TK_NUM}, // decimal
-  {"==", TK_EQ}         // equal
+  {"\\+", TK_ADD},      // plus
+  {"-", TK_MIN},        // minus
+  {"\\*", TK_MUL},      // multiply
+  {"/", TK_DIV},        // divide
+  {"\\(", TK_LP},       // (
+  {"\\)", TK_RP},       // )
+  {"==", TK_EQ},        // equal
+  {"!=", TK_NEQ},       // not equal
+  {"&&", TK_AND},       // and
+  {"||", TK_OR},        // or
+  {"!", TK_NOT},        // not
 };
 
 #define NR_REGEX (sizeof(rules) / sizeof(rules[0]) )
@@ -144,9 +151,9 @@ static bool make_token(char *e) {
             nr_token += 1;
             break;
           }
-          case TK_NUM: {
+          case TK_DEC: {
             Token t;
-            t.type = TK_NUM;
+            t.type = TK_DEC;
             int j;
             for (j = 0; j < substr_len; j++) {
               t.str[j] = *(substr_start + j);
@@ -171,7 +178,6 @@ static bool make_token(char *e) {
   return true;
 }
 
-// TODO: distinguish (2*3))+4 false / (2+3)*(5-9) false => can be computed
 bool check_parentheses(int p, int q) {
   // printf("p:%d, q:%d, tokens:%d\n", p, q, nr_token);
   // printf("tokens[%d].type: %d\n", p, tokens[p].type);
@@ -187,8 +193,11 @@ bool check_parentheses(int p, int q) {
     if (tokens[t].type == TK_LP) {
       count++;
     }
-    else if (tokens[t].type == TK_RP) {
+    else if (tokens[t].type == TK_RP && count > 0) {
       count--;
+    }
+    else if (tokens[t].type == TK_RP && count == 0) {
+      return false;
     }
     t++;
   }
@@ -207,7 +216,7 @@ int find_operator(int p, int q) {
   int count = 0;
   int loc = p;
   // restriction: count < len
-  while(t <= q) {
+  while(t <= q && count <= len) {
     if(tokens[t].type == TK_ADD || tokens[t].type == TK_MIN) {
       if(count == 0) {
         stack[count] = tokens[t].type;
@@ -330,8 +339,18 @@ int evaluate(int p, int q) {
     /*
       Single token, must be a number.
     */
+    int res = 0;
+    if (tokens[p].type == TK_HEX) {
+      int hex_len = strlen(tokens[p].str);
+      for (int i = 2; i < hex_len; i++) {
+        res += (int)(tokens[p].str[i]) * (hex_len - i - 1);
+      }
+    }
+    else {
+      res = atoi(tokens[p].str);
+    }
     printf("token_idx: %d, value: %s.\n", p, tokens[p].str);
-    return atoi(tokens[p].str);
+    return res;
   }
   else if (check_parentheses(p, q)) {
     printf("check_parenthese = true\n");
