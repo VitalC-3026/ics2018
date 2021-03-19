@@ -23,10 +23,16 @@ void init_wp_pool() {
 WP* new_wp() {
   WP* current = head;
   if (free_ == NULL) {
-    return NULL;
+    printf("No free space.\n");
+    assert(0);
   }
   if (current == NULL) {
-    printf("head null\n");
+    if (free_ == NULL) {
+      printf("free_ null\n");
+    }
+    if (free_->next == NULL) {
+      printf("free_->next null\n");
+    }
     current = free_;
     free_ = free_->next;
     current->next = NULL;
