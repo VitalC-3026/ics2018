@@ -27,16 +27,10 @@ WP* new_wp() {
     assert(0);
   }
   if (head == NULL) {
-    if (free_ == NULL) {
-      printf("free_ null\n");
-    }
-    if (free_->next == NULL) {
-      printf("free_->next null\n");
-    }
     head = free_;
     free_ = free_->next;
     head->next = NULL;
-    head->used = true;
+    // head->used = true;
     return head;
   }
   else {
