@@ -183,6 +183,7 @@ static int cmd_p(char* args) {
   char* sub = strtok(NULL, " ");
   while (sub != NULL) {
     strcat(arg, sub);
+    sub = strtok(NULL, " ");
   }
   bool success;
   int res = expr(arg, &success);
