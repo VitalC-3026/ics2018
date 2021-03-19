@@ -433,6 +433,7 @@ int evaluate(int p, int q) {
     printf("evaluate here\n");
     printf("%d, %d\n", p, q);
     int op = find_operator(p, q);
+    printf("%d\n", op);
     int val1 = evaluate(p, op - 1);
     int val2 = evaluate(op + 1, q);
     switch (tokens[op].type) {
