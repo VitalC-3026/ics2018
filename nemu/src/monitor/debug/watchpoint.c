@@ -21,25 +21,26 @@ void init_wp_pool() {
 
 /* TODO: Implement the functionality of watchpoint */
 WP* new_wp() {
-  WP* current = head;
+  
   if (free_ == NULL) {
     printf("No free space.\n");
     assert(0);
   }
-  if (current == NULL) {
+  if (head == NULL) {
     if (free_ == NULL) {
       printf("free_ null\n");
     }
     if (free_->next == NULL) {
       printf("free_->next null\n");
     }
-    current = free_;
+    head = free_;
     free_ = free_->next;
-    current->next = NULL;
-    current->used = true;
-    return current;
+    head->next = NULL;
+    head->used = true;
+    return head;
   }
   else {
+    WP* current = head;
     while(current->next != NULL) {
       current = current->next;
     }
