@@ -287,6 +287,7 @@ int find_operator(int p, int q) {
   int t = p;
   int count = 0;
   int loc = p;
+  printf("%d, %d, %d\n", t, q, len);
   // restriction: count < len
   while(t <= q && count <= len) {
     if(tokens[t].type == TK_ADD || tokens[t].type == TK_MIN) {
