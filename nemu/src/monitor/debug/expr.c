@@ -7,6 +7,7 @@
 #include <regex.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 enum {
   TK_NOTYPE = 256, TK_EQ, TK_NEQ,
@@ -873,8 +874,13 @@ int evaluate(int p, int q) {
     int res = 0;
     if (tokens[p].type == TK_HEX) {
       int hex_len = strlen(tokens[p].str);
-      for (int i = 2; i < hex_len; i++) {
-        res += (int)(tokens[p].str[i]) * (hex_len - i - 1);
+      int i = 2;
+      while (tokens[p].str[i] == 0) {
+        i++;
+      }
+      for (; i < hex_len; i++) {
+
+        res += (int)(tokens[p].str[i]) * pow(16, (hex_len - i - 1));
       }
     }
     else if (tokens[p].type == TK_DEC) {
