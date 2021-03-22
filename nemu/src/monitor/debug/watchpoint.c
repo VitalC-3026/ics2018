@@ -54,40 +54,64 @@ void free_wp(int no) {
     printf("Error: try to free a nonexistent watchpoint.\n");
     assert(0);
   }
-  while(curr_head->next->NO != no) {
-    curr_head = curr_head->next;
-  }
-  WP* tmp = curr_head->next;
-  curr_head->next = curr_head->next->next;
-  if(free_ == NULL) {
-    tmp->next = NULL;
-    free(tmp->expr);
-    tmp->used = false;
-    free_ = tmp;
+  if (curr_free == NULL) {
+    while(curr_head->next->NO != no) {
+      curr_head = curr_head->next;
+    }
+    curr_free = curr_head->next;
+    curr_head->next = curr_head->next->next;
+    curr_free->next = NULL;
   }
   else {
-    while(curr_free->next != NULL && curr_free->next->NO < no) {
-      curr_free = curr_free->next;
-    }
-    if (curr_free->next == NULL && curr_free->NO < no) {
-      tmp->used = false;
-      free(tmp->expr);
-      tmp->next = NULL;
-      curr_free->next = tmp;
-    }
-    else if (curr_free->next == NULL && curr_free->NO > no) {
-      tmp->next = curr_free;
-      free(tmp->expr);
-      tmp->used = false;
-      free_ = tmp;
-    }
-    else {
-      tmp->next = curr_free->next;
-      free(tmp->expr);
-      tmp->used = false;
-      curr_free->next = tmp;
-    }
+     while(curr_head->next->NO != no) {
+       curr_head = curr_head->next;
+     }
+     while(curr_free->next != NULL) {
+       curr_free = curr_free->next;
+     }
+     curr_free->next = curr_head->next;
+     curr_head->next = curr_head->next->next;
+     curr_free->next->next = NULL;
   }
+  
+  // while (curr_free != NULL) {
+  //   curr_free = curr_free->next;
+  // }
+  // 
+  // while(curr_head->next->NO != no) {
+  //   curr_head = curr_head->next;
+  // }
+  // WP* tmp = curr_head->next;
+  // curr_head->next = curr_head->next->next;
+  // if(free_ == NULL) {
+  //   tmp->next = NULL;
+  //   free(tmp->expr);
+  //   tmp->used = false;
+  //   free_ = tmp;
+  // }
+  // else {
+  //   while(curr_free->next != NULL && curr_free->next->NO < no) {
+  //     curr_free = curr_free->next;
+  //   }
+  //   if (curr_free->next == NULL && curr_free->NO < no) {
+  //     tmp->used = false;
+  //     free(tmp->expr);
+  //     tmp->next = NULL;
+  //     curr_free->next = tmp;
+  //   }
+  //   else if (curr_free->next == NULL && curr_free->NO > no) {
+  //     tmp->next = curr_free;
+  //     free(tmp->expr);
+  //     tmp->used = false;
+  //     free_ = tmp;
+  //   }
+  //   else {
+  //     tmp->next = curr_free->next;
+  //     free(tmp->expr);
+  //     tmp->used = false;
+  //     curr_free->next = tmp;
+  //   }
+  // }
 }
 
 void show_wp() {
