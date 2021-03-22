@@ -884,7 +884,7 @@ int evaluate(int p, int q) {
           iter++;
         }
         printf("%d, %d, %d\n", (int)(tokens[p].str[i]), iter, radix);
-        res += (int)(tokens[p].str[i]) * radix;
+        res += ((int)(tokens[p].str[i]) - 48) * radix;
       }
     }
     else if (tokens[p].type == TK_DEC) {
