@@ -68,7 +68,7 @@ void free_wp(int no) {
     return;
   }
   if (curr_free == NULL) {
-    while(curr_head->next->NO != no) {
+    while(curr_head != NULL && curr_head->next->NO != no) {
       curr_head = curr_head->next;
     }
     if (curr_head == NULL) {
@@ -81,7 +81,7 @@ void free_wp(int no) {
     curr_free->next = NULL;
   }
   else {
-    while(curr_head->next->NO != no) {
+    while(curr_head != NULL && curr_head->next->NO != no) {
       curr_head = curr_head->next;
     }
     while(curr_free->next != NULL) {
