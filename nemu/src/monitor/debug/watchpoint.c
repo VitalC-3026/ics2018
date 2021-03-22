@@ -62,13 +62,17 @@ void free_wp(int no) {
     while(curr_free->next != NULL) {
       curr_free = curr_free->next;
     }
+    curr_free->next = curr_head;
     if (curr_head->next != NULL) {
       head = curr_head->next;
     }
-    curr_head->used = false;
-    curr_head->expr = NULL;
-    curr_head->next = NULL;
-    curr_free->next = curr_head;
+    else {
+      head = NULL;
+    }
+    curr_free->next->used = false;
+    curr_free->next->expr = NULL;
+    curr_free->next->next = NULL;
+    
     return;
   }
   if (curr_free == NULL) {
