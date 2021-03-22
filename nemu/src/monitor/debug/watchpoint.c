@@ -50,6 +50,9 @@ WP* new_wp() {
 void free_wp(int no) {
   WP* curr_head = head;
   WP* curr_free = free_;
+  if (0 > no || no >= 32) {
+    printf("Error: %d is not an acceptable watchpoint.\n", no);
+  }
   if (curr_head == NULL || (curr_head->next == NULL && curr_head->NO != no)) {
     printf("Error: try to free a nonexistent watchpoint.\n");
     assert(0);
@@ -58,20 +61,26 @@ void free_wp(int no) {
     while(curr_head->next->NO != no) {
       curr_head = curr_head->next;
     }
+    if (curr_head == NULL) {
+      printf("Error: watchpoint %d is not found to be used.\n", no);
+    }
     curr_free = curr_head->next;
     curr_head->next = curr_head->next->next;
     curr_free->next = NULL;
   }
   else {
-     while(curr_head->next->NO != no) {
-       curr_head = curr_head->next;
-     }
-     while(curr_free->next != NULL) {
-       curr_free = curr_free->next;
-     }
-     curr_free->next = curr_head->next;
-     curr_head->next = curr_head->next->next;
-     curr_free->next->next = NULL;
+    while(curr_head->next->NO != no) {
+      curr_head = curr_head->next;
+    }
+    while(curr_free->next != NULL) {
+      curr_free = curr_free->next;
+    }
+    if (curr_head == NULL) {
+      printf("Error: watchpoint %d is not found to be used.\n", no);
+    }
+    curr_free->next = curr_head->next;
+    curr_head->next = curr_head->next->next;
+    curr_free->next->next = NULL;
   }
   
   // while (curr_free != NULL) {
