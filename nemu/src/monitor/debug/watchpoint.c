@@ -58,6 +58,7 @@ void free_wp(int no) {
     assert(0);
   }
   if (curr_head->next == NULL && curr_head->NO == no) {
+    printf("%d\n", no);
     while(curr_free->next != NULL) {
       curr_free = curr_free->next;
     }

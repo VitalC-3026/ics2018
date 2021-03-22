@@ -210,7 +210,7 @@ static int cmd_w(char* args) {
   strcpy(wp->expr, arg);
   printf("%s\n", wp->expr);
   wp->value = expr(arg, &success);
-  printf("Set a watchpoint %d on %s", wp->NO, wp->expr);
+  printf("Set a watchpoint %d on %s.\n", wp->NO, wp->expr);
   return 0;
 }
 
