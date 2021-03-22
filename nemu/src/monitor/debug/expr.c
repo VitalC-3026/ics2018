@@ -883,6 +883,7 @@ int evaluate(int p, int q) {
           radix *= 16;
           iter++;
         }
+        printf("%d\n", radix);
         res += (int)(tokens[p].str[i]) * radix;
       }
     }
