@@ -13,7 +13,7 @@ enum {
   /* TODO: Add more token types */
   TK_ADD, TK_MIN, TK_MUL, TK_DIV,
   TK_LP, TK_RP, TK_DEC, TK_HEX, TK_REG,
-  TK_AND, TK_OR, TK_NOT
+  TK_AND, TK_OR, TK_NOT, TK_POI, TK_NEG
 };
 
 static struct rule {
@@ -26,7 +26,7 @@ static struct rule {
    */
   {"0x[0-9a-fA-F]+", TK_HEX}, // hexadecimal
   {"[1-9][0-9]*|0", TK_DEC}, // decimal
-  {"\\$e[a-d]x|\\$esp|\\$ebp|\\$esi|\\$edi|\\$eip", TK_REG}, // register
+  {"\\$(eax|ecx|edx|ebx|esp|ebp|esi|edi|eip|ax|cx|dx|bx|sp|bp|si|di|al|cl|dl|bl|ah|ch|dh|bh)", TK_REG}, // register
   {"\\+", TK_ADD},      // plus
   {"-", TK_MIN},        // minus
   {"\\*", TK_MUL},      // multiply
@@ -94,7 +94,10 @@ static bool make_token(char *e) {
          * to record the token in the array `tokens'. For certain types
          * of tokens, some extra actions should be performed.
          */
-
+        if (substr_len > 31) {
+          printf("Error: too long for a token.\n");
+          assert(0);
+        }
         switch (rules[i].token_type) {
           case TK_ADD: {
             Token t;
@@ -235,6 +238,9 @@ static bool make_token(char *e) {
             nr_token += 1;
             break;
           }
+          case TK_NOTYPE: {
+            break;
+          }
           default: TODO();
         }
         break;
@@ -289,7 +295,23 @@ int find_operator(int p, int q) {
   int loc = p;
   // restriction: count < len
   while(t <= q && count <= len) {
-    if(tokens[t].type == TK_ADD || tokens[t].type == TK_MIN) {
+    if (tokens[t].type == TK_LP) {
+      int tmp = t;
+      while(tmp < q && tokens[tmp].type != TK_RP) {
+        tmp++;
+      }
+      if (tmp == q && tokens[tmp].type != TK_RP) {
+        printf("impossible to reach here! Incompatible parentheses.\n");
+      }
+      else if (tokens[tmp].type == TK_RP){
+         t = tmp + 1;
+      }
+      
+    }
+    else if (tokens[t].type == TK_RP) {
+      printf("impossible to reach here! RP should have already been eliminated.\n");
+    }
+    else if(tokens[t].type == TK_ADD || tokens[t].type == TK_MIN) {
       if(count == 0) {
         stack[count] = tokens[t].type;
         loc = t;
@@ -317,25 +339,41 @@ int find_operator(int p, int q) {
             loc = t;
             break;
           }
-          case TK_LP: {
+          case TK_LP: { break; }
+          case TK_RP: { break; }
+          case TK_AND: {
             stack[count] = tokens[t].type;
             count++;
             break;
           }
-          case TK_RP: {
-            int tmp = count - 1;
-            while(stack[tmp] != TK_LP || tmp >= 0) {
-              stack[tmp] = 0;
-              tmp--;
-            }
-            if (tmp < 0) {
-              printf("impossible to reach here!\n");
-            }
-            if (tmp != 0) {
-              stack[tmp - 1] = tokens[t].type;
-              loc = t;
-              count = tmp;
-            }
+          case TK_OR: {
+            stack[count] = tokens[t].type;
+            count++;
+            break;
+          }
+          case TK_EQ: {
+            stack[count] = tokens[t].type;
+            count++;
+            break;
+          }
+          case TK_NEQ: {
+            stack[count] = tokens[t].type;
+            count++;
+            break;
+          }
+          case TK_NEG: {
+            stack[count - 1] = tokens[t].type;
+            loc = t;
+            break;
+          }
+          case TK_POI: {
+            stack[count - 1] = tokens[t].type;
+            loc = t;
+            break;
+          }
+          case TK_NOT: {
+            stack[count - 1] = tokens[t].type;
+            loc = t;
             break;
           }
         }
@@ -369,32 +407,453 @@ int find_operator(int p, int q) {
             loc = t;
             break;
           }
-          case TK_LP: {
+          case TK_LP: { break; }
+          case TK_RP: { break; }
+          case TK_AND: {
             stack[count] = tokens[t].type;
             count++;
             break;
           }
-          case TK_RP: { break; }
+          case TK_OR: {
+            stack[count] = tokens[t].type;
+            count++;
+            break;
+          }
+          case TK_EQ: {
+            stack[count] = tokens[t].type;
+            count++;
+            break;
+          }
+          case TK_NEQ: {
+            stack[count] = tokens[t].type;
+            count++;
+            break;
+          }
+          case TK_NEG: {
+            stack[count - 1] = tokens[t].type;
+            loc = t;
+            break;
+          }
+          case TK_POI: {
+            stack[count - 1] = tokens[t].type;
+            loc = t;
+            break;
+          }
+          case TK_NOT: {
+            stack[count - 1] = tokens[t].type;
+            loc = t;
+            break;
+          }
         }
       }
     }
-    else if (tokens[t].type == TK_LP) {
-      int tmp = t;
-      while(tmp < q && tokens[tmp].type != TK_RP) {
-        tmp++;
+    else if (tokens[t].type == TK_OR) {
+      if(count == 0) {
+        stack[count] = tokens[t].type;
+        count++;
+        loc = t;
       }
-      if (tmp == q && tokens[tmp].type != TK_RP) {
-        printf("impossible to reach here! Incompatible parentheses.\n");
+      else {
+        switch (stack[count - 1]) {
+          case TK_ADD: {
+            stack[count - 1] = tokens[t].type;
+            loc = t;
+            break;
+          }
+          case TK_MIN: {
+            stack[count - 1] = tokens[t].type;
+            loc = t;
+            break;
+          }
+          case TK_MUL: {
+            stack[count - 1] = tokens[t].type;
+            loc = t;
+            break;
+          }
+          case TK_DIV: {
+            stack[count - 1] = tokens[t].type;
+            loc = t;
+            break;
+          }
+          case TK_LP: { break; }
+          case TK_RP: { break; }
+          case TK_EQ: {
+            stack[count - 1] = tokens[t].type;
+            loc = t;
+            break;
+          }
+          case TK_NEQ: {
+            stack[count - 1] = tokens[t].type;
+            loc = t;
+            break;
+          }
+          case TK_AND: {
+            stack[count - 1] = tokens[t].type;
+            loc = t;
+            break;
+          }
+          case TK_OR: {
+            stack[count - 1] = tokens[t].type;
+            loc = t;
+            break;
+          }
+          case TK_NEG: {
+            stack[count - 1] = tokens[t].type;
+            loc = t;
+            break;
+          }
+          case TK_POI: {
+            stack[count - 1] = tokens[t].type;
+            loc = t;
+            break;
+          }
+          case TK_NOT: {
+            stack[count - 1] = tokens[t].type;
+            loc = t;
+            break;
+          }
+        }
       }
-      else if (tokens[tmp].type == TK_RP){
-         t = tmp + 1;
-      }
-      
     }
-    else if (tokens[t].type == TK_RP) {
-      printf("impossible to reach here! RP should have already been eliminated.\n");
+    else if (tokens[t].type == TK_AND) {
+      if(count == 0) {
+        stack[count] = tokens[t].type;
+        count++;
+        loc = t;
+      }
+      else {
+        switch (stack[count - 1]) {
+          case TK_ADD: {
+            stack[count - 1] = tokens[t].type;
+            loc = t;
+            break;
+          }
+          case TK_MIN: {
+            stack[count - 1] = tokens[t].type;
+            loc = t;
+            break;
+          }
+          case TK_MUL: {
+            stack[count - 1] = tokens[t].type;
+            loc = t;
+            break;
+          }
+          case TK_DIV: {
+            stack[count - 1] = tokens[t].type;
+            loc = t;
+            break;
+          }
+          case TK_LP: { break; }
+          case TK_RP: { break; }
+          case TK_EQ: {
+            stack[count - 1] = tokens[t].type;
+            loc = t;
+            break;
+          }
+          case TK_NEQ: {
+            stack[count - 1] = tokens[t].type;
+            loc = t;
+            break;
+          }
+          case TK_AND: {
+            stack[count - 1] = tokens[t].type;
+            loc = t;
+            break;
+          }
+          case TK_OR: {
+            stack[count] = tokens[t].type;
+            count++;
+            break;
+          }
+          case TK_NEG: {
+            stack[count - 1] = tokens[t].type;
+            loc = t;
+            break;
+          }
+          case TK_POI: {
+            stack[count - 1] = tokens[t].type;
+            loc = t;
+            break;
+          }
+          case TK_NOT: {
+            stack[count - 1] = tokens[t].type;
+            loc = t;
+            break;
+          }
+        }
+      }
+    }
+    else if (tokens[t].type == TK_EQ || tokens[t].type == TK_NEQ) {
+      if(count == 0) {
+        stack[count] = tokens[t].type;
+        count++;
+        loc = t;
+      }
+      else {
+        switch (stack[count - 1]) {
+          case TK_ADD: {
+            stack[count - 1] = tokens[t].type;
+            loc = t;
+            break;
+          }
+          case TK_MIN: {
+            stack[count - 1] = tokens[t].type;
+            loc = t;
+            break;
+          }
+          case TK_MUL: {
+            stack[count - 1] = tokens[t].type;
+            loc = t;
+            break;
+          }
+          case TK_DIV: {
+            stack[count - 1] = tokens[t].type;
+            loc = t;
+            break;
+          }
+          case TK_LP: { break; }
+          case TK_RP: { break; }
+          case TK_EQ: {
+            stack[count - 1] = tokens[t].type;
+            loc = t;
+            break;
+          }
+          case TK_NEQ: {
+            stack[count - 1] = tokens[t].type;
+            loc = t;
+            break;
+          }
+          case TK_AND: {
+            stack[count] = tokens[t].type;
+            count++;
+            break;
+          }
+          case TK_OR: {
+            stack[count] = tokens[t].type;
+            count++;
+            break;
+          }
+          case TK_NEG: {
+            stack[count - 1] = tokens[t].type;
+            loc = t;
+            break;
+          }
+          case TK_POI: {
+            stack[count - 1] = tokens[t].type;
+            loc = t;
+            break;
+          }
+          case TK_NOT: {
+            stack[count - 1] = tokens[t].type;
+            loc = t;
+            break;
+          }
+        }
+      }
+    }
+    else if (tokens[t].type == TK_NEG) {
+      if(count == 0) {
+        stack[count] = tokens[t].type;
+        count++;
+        loc = t;
+      }
+      else {
+        switch (stack[count - 1]) {
+          case TK_ADD: {
+            stack[count] = tokens[t].type;
+            count++;
+            break;
+          }
+          case TK_MIN: {
+            stack[count] = tokens[t].type;
+            count++;
+            break;
+          }
+          case TK_MUL: {
+            stack[count] = tokens[t].type;
+            count++;
+            break;
+          }
+          case TK_DIV: {
+            stack[count] = tokens[t].type;
+            count++;
+            break;
+          }
+          case TK_LP: { break; }
+          case TK_RP: { break; }
+          case TK_EQ: {
+            stack[count] = tokens[t].type;
+            count++;
+            break;
+          }
+          case TK_NEQ: {
+            stack[count] = tokens[t].type;
+            count++;
+            break;
+          }
+          case TK_AND: {
+            stack[count] = tokens[t].type;
+            count++;
+            break;
+          }
+          case TK_OR: {
+            stack[count] = tokens[t].type;
+            count++;
+            break;
+          }
+          case TK_NOT: {
+            stack[count] = tokens[t].type;
+            count++;
+            break;
+          }
+          case TK_POI: {
+            stack[count] = tokens[t].type;
+            count++;
+            break;
+          }
+          case TK_NEG: {
+            stack[count] = tokens[t].type;
+            count++;
+            break;
+          }
+        }
+      }
+    }
+    else if (tokens[t].type == TK_POI) {
+      if(count == 0) {
+        stack[count] = tokens[t].type;
+        count++;
+        loc = t;
+      }
+      else {
+        switch (stack[count - 1]) {
+          case TK_ADD: {
+            stack[count] = tokens[t].type;
+            count++;
+            break;
+          }
+          case TK_MIN: {
+            stack[count] = tokens[t].type;
+            count++;
+            break;
+          }
+          case TK_MUL: {
+            stack[count] = tokens[t].type;
+            count++;
+            break;
+          }
+          case TK_DIV: {
+            stack[count] = tokens[t].type;
+            count++;
+            break;
+          }
+          case TK_LP: { break; }
+          case TK_RP: { break; }
+          case TK_EQ: {
+            stack[count] = tokens[t].type;
+            count++;
+            break;
+          }
+          case TK_NEQ: {
+            stack[count] = tokens[t].type;
+            count++;
+            break;
+          }
+          case TK_AND: {
+            stack[count] = tokens[t].type;
+            count++;
+            break;
+          }
+          case TK_OR: {
+            stack[count] = tokens[t].type;
+            count++;
+            break;
+          }
+          case TK_NOT: {
+            stack[count] = tokens[t].type;
+            count++;
+            break;
+          }
+          case TK_POI: {
+            stack[count - 1] = tokens[t].type;
+            loc = t;
+            break;
+          }
+          case TK_NEG: {
+            stack[count - 1] = tokens[t].type;
+            loc = t;
+            break;
+          }
+        }
+      }
     }
     else if (tokens[t].type == TK_NOT) {
+      if(count == 0) {
+        stack[count] = tokens[t].type;
+        count++;
+        loc = t;
+      }
+      else {
+        switch (stack[count - 1]) {
+          case TK_ADD: {
+            stack[count] = tokens[t].type;
+            count++;
+            break;
+          }
+          case TK_MIN: {
+            stack[count] = tokens[t].type;
+            count++;
+            break;
+          }
+          case TK_MUL: {
+            stack[count] = tokens[t].type;
+            count++;
+            break;
+          }
+          case TK_DIV: {
+            stack[count] = tokens[t].type;
+            count++;
+            break;
+          }
+          case TK_LP: { break; }
+          case TK_RP: { break; }
+          case TK_EQ: {
+            stack[count] = tokens[t].type;
+            count++;
+            break;
+          }
+          case TK_NEQ: {
+            stack[count] = tokens[t].type;
+            count++;
+            break;
+          }
+          case TK_AND: {
+            stack[count] = tokens[t].type;
+            count++;
+            break;
+          }
+          case TK_OR: {
+            stack[count] = tokens[t].type;
+            count++;
+            break;
+          }
+          case TK_NOT: {
+            stack[count] = tokens[t].type;
+            count++;
+            break;
+          }
+          case TK_POI: {
+            stack[count] = tokens[t].type;
+            count++;
+            break;
+          }
+          case TK_NEG: {
+            stack[count - 1] = tokens[t].type;
+            loc = t;
+            break;
+          }
+        }
+      }
     }
     t++;
   }
@@ -404,8 +863,8 @@ int find_operator(int p, int q) {
 
 int evaluate(int p, int q) {
   if (p > q) {
-    printf("Error: bad expression!\n");
-    return -1;
+    // printf("Error: bad expression!\n");
+    return 0;
   }
   else if (p == q) {
     /*
@@ -418,9 +877,25 @@ int evaluate(int p, int q) {
         res += (int)(tokens[p].str[i]) * (hex_len - i - 1);
       }
     }
-    else {
+    else if (tokens[p].type == TK_DEC) {
       res = atoi(tokens[p].str);
     }
+    else if (tokens[p].type == TK_REG) {
+      char tmp[3] = {tokens[p].str[1], tokens[p].str[2], tokens[p].str[3]};
+      for(int i = 0; i < 8; i++) {
+        if (!strcmp(tmp, regsl[i])) {return cpu.gpr[i]._32;}
+      }
+      char tmp1[2] = {tokens[p].str[1], tokens[p].str[2]};
+      for(int i = 0; i < 8; i++) {
+        if (!strcmp(tmp1, regsw[i])) {return cpu.gpr[i]._16;}
+      }
+      for(int i = 0; i < 8; i++) {
+        if (!strcmp(tmp1, regsb[i])) {return cpu.gpr[i%4]._8[i/4];}
+      }
+      if (strcmp(tmp, "eip")) {return cpu.eip;}
+      else { printf("Unknown register.\n"); assert(0);}
+    }
+    
     printf("token_idx: %d, value: %s.\n", p, tokens[p].str);
     return res;
   }
@@ -440,6 +915,41 @@ int evaluate(int p, int q) {
       case TK_MIN: return val1 - val2;
       case TK_MUL: return val1 * val2;
       case TK_DIV: return val1 / val2;
+      case TK_AND: {
+        if (val1 != 0 && val2 != 0) {
+          return true;
+        }
+        else {
+          return false;
+        }
+      }
+      case TK_OR: {
+        if (val1 != 0 || val2 != 0) {
+          return true;
+        }
+        else {
+          return false;
+        }
+      }
+      case TK_EQ: {
+        if (val1 == val2){
+          return true;
+        }
+        else {
+          return false;
+        }
+      }
+      case TK_NEQ: {
+        if (val1 != val2) {
+          return true;
+        }
+        else {
+          return false;
+        }
+      }
+      case TK_NEG: { return -1 * val2; }
+      case TK_POI: { return vaddr_read(val2, 4); }
+      case TK_NOT: { return !val2; }
       default: assert(0);
     }
 
@@ -454,6 +964,14 @@ uint32_t expr(char *e, bool *success) {
   *success = true;
   printf("make token successfully!\n");
   /* TODO: Insert codes to evaluate the expression. */
+  for (int i = 0; i < nr_token; i++) {
+    if (tokens[i].type == TK_MIN && (i == 0 || (tokens[i - 1].type != TK_DEC && tokens[i - 1].type  != TK_HEX && tokens[i - 1].type  != TK_REG))) {
+      tokens[i].type = TK_NEG;
+    }
+    else if (tokens[i].type == TK_MUL && (i == 0 || (tokens[i - 1].type != TK_DEC && tokens[i - 1].type  != TK_HEX && tokens[i - 1].type  != TK_REG && tokens[i - 1].type != TK_RP))) {
+      tokens[i].type = TK_POI;
+    }
+  }
   int p = 0, q = nr_token - 1;
   int value = evaluate(p, q);
   return value;
