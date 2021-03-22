@@ -57,13 +57,17 @@ void free_wp(int no) {
     printf("Error: try to free a nonexistent watchpoint.\n");
     assert(0);
   }
-  if (curr_head->next == NULL && curr_head->NO == no) {
+  if (curr_head->NO == no) {
     printf("%d\n", no);
     while(curr_free->next != NULL) {
       curr_free = curr_free->next;
     }
+    if (curr_head->next != NULL) {
+      head = curr_head->next;
+    }
     curr_head->used = false;
     curr_head->expr = NULL;
+    curr_head->next = NULL;
     curr_free->next = curr_head;
     return;
   }
