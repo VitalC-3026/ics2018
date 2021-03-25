@@ -263,7 +263,7 @@ bool check_parentheses(int p, int q) {
   // printf("tokens[%d].type: %d\n", p, tokens[p].type);
   // printf("tokens[%d].type: %d\n", q, tokens[q].type);
   if (tokens[p].type != TK_LP || tokens[q].type != TK_RP) {
-    printf("check_parentheses failed\n");
+    // printf("check_parentheses failed\n");
     return false;
   }
   int t = p + 1;
@@ -288,7 +288,7 @@ bool check_parentheses(int p, int q) {
 }
 
 int find_right_parenthese(int p, int q) {
-  printf("right_parenthese\n");
+  // printf("right_parenthese\n");
   int tmp = p;
   int right = q;
   while(tmp < q && tokens[tmp].type != TK_RP) {
