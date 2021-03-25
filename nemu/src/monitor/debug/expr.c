@@ -304,7 +304,7 @@ int find_operator(int p, int q) {
         printf("impossible to reach here! Incompatible parentheses.\n");
       }
       else if (tokens[tmp].type == TK_RP){
-         t = tmp + 1;
+         t = tmp;
       }
       
     }
