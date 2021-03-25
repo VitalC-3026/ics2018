@@ -291,7 +291,7 @@ int find_right_parenthese(int p, int q) {
   int right = q;
   while(tmp < q && tokens[tmp].type != TK_RP) {
     if (tokens[tmp].type == TK_LP){
-      right = find_right_parenthese(tmp, q);
+      right = find_right_parenthese(tmp+1, q);
       if(right == -1) {
         return -1;
       }
@@ -319,7 +319,7 @@ int find_operator(int p, int q) {
   // restriction: count < len
   while(t <= q && count <= len) {
     if (tokens[t].type == TK_LP) {
-      t = find_right_parenthese(t, q);
+      t = find_right_parenthese(t+1, q);
       // while(tmp < q && tokens[tmp].type != TK_RP) {
       //   tmp++;
       // }
