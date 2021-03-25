@@ -204,11 +204,11 @@ static int cmd_w(char* args) {
   }
   bool success;
   WP* wp = new_wp();
-  printf("%d\n", wp->NO);
+  // printf("%d\n", wp->NO);
   wp->expr = (char*)malloc(strlen(arg)*sizeof(char));
   memset(wp->expr, 0, strlen(arg));
   strcpy(wp->expr, arg);
-  printf("%s\n", wp->expr);
+  // printf("%s\n", wp->expr);
   wp->value = expr(arg, &success);
   printf("Set a watchpoint %d on %s.\n", wp->NO, wp->expr);
   return 0;
