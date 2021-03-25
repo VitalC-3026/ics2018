@@ -171,7 +171,7 @@ bool check_wp(){
       int val = expr(curr->expr, &success);
       if (val != curr->value) {
         flag = true;
-        printf("%d:\t%s\tchanges from\t%d\tto\t%d.\n", curr->NO, curr->expr, curr->value, val);
+        printf("%d:\t%s\tchanges from %d to %d.\n", curr->NO, curr->expr, curr->value, val);
         curr->value = val;
       }
       curr = curr->next;
