@@ -162,7 +162,7 @@ void show_wp() {
 bool check_wp(){
   WP* curr = head;
   if(head == NULL) {
-    return true;
+    return false;
   }
   else {
     bool success = false;
