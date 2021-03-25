@@ -329,7 +329,7 @@ bool compare_priority(int op1, int op2){
 }
 
 int find_operator(int p, int q) {
-  printf("find_operator from %d to %d\n", p, q);
+  // printf("find_operator from %d to %d\n", p, q);
   int len = (q - p) + 1;
   int* stack = (int*) malloc(sizeof(int)*len);
   memset(stack, 0, sizeof(int)*len);
@@ -960,18 +960,18 @@ int evaluate(int p, int q) {
       else { printf("Unknown register.\n"); assert(0);}
     }
     
-    printf("token_idx: %d, value: %s.\n", p, tokens[p].str);
+    // printf("token_idx: %d, value: %s.\n", p, tokens[p].str);
     return res;
   }
   else if (check_parentheses(p, q)) {
-    printf("check_parenthese = true\n");
+    // printf("check_parenthese = true\n");
     return evaluate(p + 1, q - 1);
   }
   else {
-    printf("evaluate here\n");
-    printf("%d, %d\n", p, q);
+    // printf("evaluate here\n");
+    // printf("%d, %d\n", p, q);
     int op = find_operator(p, q);
-    printf("%d\n", op);
+    // printf("%d\n", op);
     int val1 = evaluate(p, op - 1);
     int val2 = evaluate(op + 1, q);
     switch (tokens[op].type) {
