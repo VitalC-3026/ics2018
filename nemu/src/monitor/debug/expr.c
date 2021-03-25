@@ -286,6 +286,7 @@ bool check_parentheses(int p, int q) {
 }
 
 int find_right_parenthese(int p, int q) {
+  printf("right_parenthese\n");
   int tmp = p;
   int right = q;
   while(tmp < q && tokens[tmp].type != TK_RP) {
