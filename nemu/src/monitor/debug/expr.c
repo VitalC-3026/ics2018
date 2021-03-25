@@ -285,6 +285,28 @@ bool check_parentheses(int p, int q) {
   return true;
 }
 
+int find_right_parenthese(int p, int q) {
+  int tmp = p;
+  int right = q;
+  while(tmp < q && tokens[tmp].type != TK_RP) {
+    if (tokens[tmp].type == TK_LP){
+      right = find_right_parenthese(tmp, q);
+      if(right == -1) {
+        return -1;
+      }
+      tmp = right;
+    }
+    tmp++;
+  }
+  if (tmp == q && tokens[q].type != TK_RP) {
+    printf("impossible to reach here! Incompatible parentheses.\n");
+    return -1;
+  }
+  else {
+    return tmp;
+  }
+}
+
 int find_operator(int p, int q) {
   printf("find_operator from %d to %d\n", p, q);
   int len = (q - p) + 1;
@@ -296,17 +318,16 @@ int find_operator(int p, int q) {
   // restriction: count < len
   while(t <= q && count <= len) {
     if (tokens[t].type == TK_LP) {
-      int tmp = t;
-      while(tmp < q && tokens[tmp].type != TK_RP) {
-        tmp++;
-      }
-      if (tmp == q && tokens[tmp].type != TK_RP) {
-        printf("impossible to reach here! Incompatible parentheses.\n");
-      }
-      else if (tokens[tmp].type == TK_RP){
-         t = tmp;
-      }
-      
+      t = find_right_parenthese(t, q);
+      // while(tmp < q && tokens[tmp].type != TK_RP) {
+      //   tmp++;
+      // }
+      // if (tmp == q && tokens[tmp].type != TK_RP) {
+      //   printf("impossible to reach here! Incompatible parentheses.\n");
+      // }
+      // else if (tokens[tmp].type == TK_RP){
+      //    t = tmp;
+      // }
     }
     else if (tokens[t].type == TK_RP) {
       printf("impossible to reach here! RP should have already been eliminated.\n");
@@ -867,9 +888,6 @@ int evaluate(int p, int q) {
     return 0;
   }
   else if (p == q) {
-    /*
-      Single token, must be a number.
-    */
     int res = 0;
     if (tokens[p].type == TK_HEX) {
       int hex_len = strlen(tokens[p].str);
