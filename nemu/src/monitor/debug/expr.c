@@ -9,11 +9,13 @@
 #include <string.h>
 
 enum {
-  TK_NOTYPE = 256, TK_EQ, TK_NEQ,
-  /* TODO: Add more token types */
+  TK_NOTYPE = 256, 
+   /* TODO: Add more token types */
+  TK_DEC, TK_HEX, TK_REG,
+  TK_OR, TK_AND, TK_EQ, TK_NEQ,
   TK_ADD, TK_MIN, TK_MUL, TK_DIV,
-  TK_LP, TK_RP, TK_DEC, TK_HEX, TK_REG,
-  TK_AND, TK_OR, TK_NOT, TK_POI, TK_NEG
+  TK_NOT, TK_POI, TK_NEG,
+  TK_LP, TK_RP
 };
 
 static struct rule {
@@ -308,6 +310,24 @@ int find_right_parenthese(int p, int q) {
   }
 }
 
+// true => op1 > op2, false => op1 < op2
+bool compare_priority(int op1, int op2){
+  if ((op1 == TK_EQ && op2 == TK_NEQ) || (op1 == TK_NEQ && op2 == TK_EQ)) {
+    return true;
+  }
+  if ((op1 == TK_ADD && op2 == TK_MIN) || (op1 == TK_MIN && op2 == TK_ADD)) {
+    return true;
+  }
+  if ((op1 == TK_MUL && op2 == TK_DIV) || (op1 == TK_DIV && op2 == TK_MUL)) {
+    return true;
+  }
+  if (op1 == op2) {
+    if ((op1 == TK_NEG || TK_POI || TK_NOT)) {return false;}
+    else {return true;}
+  }
+  return op1 > op2;
+}
+
 int find_operator(int p, int q) {
   printf("find_operator from %d to %d\n", p, q);
   int len = (q - p) + 1;
@@ -316,6 +336,7 @@ int find_operator(int p, int q) {
   int t = p;
   int count = 0;
   int loc = p;
+  int operand = 0;
   // restriction: count < len
   while(t <= q && count <= len) {
     if (tokens[t].type == TK_LP) {
@@ -333,550 +354,564 @@ int find_operator(int p, int q) {
     else if (tokens[t].type == TK_RP) {
       printf("impossible to reach here! RP should have already been eliminated.\n");
     }
-    else if(tokens[t].type == TK_ADD || tokens[t].type == TK_MIN) {
+    else if(tokens[t].type != TK_DEC && tokens[t].type != TK_HEX 
+    && tokens[t].type != TK_REG && tokens[t].type != TK_NOTYPE) {
       if(count == 0) {
         stack[count] = tokens[t].type;
         loc = t;
         count++;
+        operand = tokens[t].type;
       }
       else {
-        switch (stack[count - 1]){
-          case TK_ADD:{
-            stack[count - 1] = tokens[t].type;
-            loc = t;
-            break;
-          }
-          case TK_MIN:{
-            stack[count - 1] = tokens[t].type;
-            loc = t;
-            break;
-          }
-          case TK_MUL: {
-            stack[count - 1] = tokens[t].type;
-            loc = t;
-            break;
-          }
-          case TK_DIV: {
-            stack[count - 1] = tokens[t].type;
-            loc = t;
-            break;
-          }
-          case TK_LP: { break; }
-          case TK_RP: { break; }
-          case TK_AND: {
-            stack[count] = tokens[t].type;
-            count++;
-            break;
-          }
-          case TK_OR: {
-            stack[count] = tokens[t].type;
-            count++;
-            break;
-          }
-          case TK_EQ: {
-            stack[count] = tokens[t].type;
-            count++;
-            break;
-          }
-          case TK_NEQ: {
-            stack[count] = tokens[t].type;
-            count++;
-            break;
-          }
-          case TK_NEG: {
-            stack[count - 1] = tokens[t].type;
-            loc = t;
-            break;
-          }
-          case TK_POI: {
-            stack[count - 1] = tokens[t].type;
-            loc = t;
-            break;
-          }
-          case TK_NOT: {
-            stack[count - 1] = tokens[t].type;
-            loc = t;
-            break;
-          }
+        if (compare_priority(operand, tokens[t].type)) {
+          loc = t;
+          operand = tokens[t].type;
         }
+        // switch (stack[count - 1]){
+        //   case TK_ADD:{
+        //     // while (count > 0) {
+        //     //   if (compare_priority(stack[count - 1], tokens[t].type)) {
+        //     //     count--;
+        //     //   }
+        //     //   else {
+        //     //     break;
+        //     //   }
+        //     // }
+        //     stack[count - 1] = tokens[t].type;
+        //     loc = t;
+        //     break;
+        //   }
+        //   case TK_MIN:{
+        //     stack[count - 1] = tokens[t].type;
+        //     loc = t;
+        //     break;
+        //   }
+        //   case TK_MUL: {
+        //     stack[count - 1] = tokens[t].type;
+        //     loc = t;
+        //     break;
+        //   }
+        //   case TK_DIV: {
+        //     stack[count - 1] = tokens[t].type;
+        //     loc = t;
+        //     break;
+        //   }
+        //   case TK_LP: { break; }
+        //   case TK_RP: { break; }
+        //   case TK_AND: {
+        //     stack[count] = tokens[t].type;
+        //     count++;
+        //     break;
+        //   }
+        //   case TK_OR: {
+        //     stack[count] = tokens[t].type;
+        //     count++;
+        //     break;
+        //   }
+        //   case TK_EQ: {
+        //     stack[count] = tokens[t].type;
+        //     count++;
+        //     break;
+        //   }
+        //   case TK_NEQ: {
+        //     stack[count] = tokens[t].type;
+        //     count++;
+        //     break;
+        //   }
+        //   case TK_NEG: {
+        //     stack[count - 1] = tokens[t].type;
+        //     loc = t;
+        //     break;
+        //   }
+        //   case TK_POI: {
+        //     stack[count - 1] = tokens[t].type;
+        //     loc = t;
+        //     break;
+        //   }
+        //   case TK_NOT: {
+        //     stack[count - 1] = tokens[t].type;
+        //     loc = t;
+        //     break;
+        //   }
+        // }
       }
     }
-    else if (tokens[t].type == TK_MUL || tokens[t].type == TK_DIV){
-      if (count == 0) {
-        stack[count] = tokens[t].type;
-        loc = t;
-        count++;
-      }
-      else {
-        switch (stack[count - 1]) {
-          case TK_ADD: {
-            stack[count] = tokens[t].type;
-            count++;
-            break;
-          }
-          case TK_MIN: {
-            stack[count] = tokens[t].type;
-            count++;
-            break;
-          }
-          case TK_MUL: {
-            stack[count - 1] = tokens[t].type;
-            loc = t;
-            break;
-          }
-          case TK_DIV: {
-            stack[count - 1] = tokens[t].type;
-            loc = t;
-            break;
-          }
-          case TK_LP: { break; }
-          case TK_RP: { break; }
-          case TK_AND: {
-            stack[count] = tokens[t].type;
-            count++;
-            break;
-          }
-          case TK_OR: {
-            stack[count] = tokens[t].type;
-            count++;
-            break;
-          }
-          case TK_EQ: {
-            stack[count] = tokens[t].type;
-            count++;
-            break;
-          }
-          case TK_NEQ: {
-            stack[count] = tokens[t].type;
-            count++;
-            break;
-          }
-          case TK_NEG: {
-            stack[count - 1] = tokens[t].type;
-            loc = t;
-            break;
-          }
-          case TK_POI: {
-            stack[count - 1] = tokens[t].type;
-            loc = t;
-            break;
-          }
-          case TK_NOT: {
-            stack[count - 1] = tokens[t].type;
-            loc = t;
-            break;
-          }
-        }
-      }
-    }
-    else if (tokens[t].type == TK_OR) {
-      if(count == 0) {
-        stack[count] = tokens[t].type;
-        count++;
-        loc = t;
-      }
-      else {
-        switch (stack[count - 1]) {
-          case TK_ADD: {
-            stack[count - 1] = tokens[t].type;
-            loc = t;
-            break;
-          }
-          case TK_MIN: {
-            stack[count - 1] = tokens[t].type;
-            loc = t;
-            break;
-          }
-          case TK_MUL: {
-            stack[count - 1] = tokens[t].type;
-            loc = t;
-            break;
-          }
-          case TK_DIV: {
-            stack[count - 1] = tokens[t].type;
-            loc = t;
-            break;
-          }
-          case TK_LP: { break; }
-          case TK_RP: { break; }
-          case TK_EQ: {
-            stack[count - 1] = tokens[t].type;
-            loc = t;
-            break;
-          }
-          case TK_NEQ: {
-            stack[count - 1] = tokens[t].type;
-            loc = t;
-            break;
-          }
-          case TK_AND: {
-            stack[count - 1] = tokens[t].type;
-            loc = t;
-            break;
-          }
-          case TK_OR: {
-            stack[count - 1] = tokens[t].type;
-            loc = t;
-            break;
-          }
-          case TK_NEG: {
-            stack[count - 1] = tokens[t].type;
-            loc = t;
-            break;
-          }
-          case TK_POI: {
-            stack[count - 1] = tokens[t].type;
-            loc = t;
-            break;
-          }
-          case TK_NOT: {
-            stack[count - 1] = tokens[t].type;
-            loc = t;
-            break;
-          }
-        }
-      }
-    }
-    else if (tokens[t].type == TK_AND) {
-      if(count == 0) {
-        stack[count] = tokens[t].type;
-        count++;
-        loc = t;
-      }
-      else {
-        switch (stack[count - 1]) {
-          case TK_ADD: {
-            stack[count - 1] = tokens[t].type;
-            loc = t;
-            break;
-          }
-          case TK_MIN: {
-            stack[count - 1] = tokens[t].type;
-            loc = t;
-            break;
-          }
-          case TK_MUL: {
-            stack[count - 1] = tokens[t].type;
-            loc = t;
-            break;
-          }
-          case TK_DIV: {
-            stack[count - 1] = tokens[t].type;
-            loc = t;
-            break;
-          }
-          case TK_LP: { break; }
-          case TK_RP: { break; }
-          case TK_EQ: {
-            stack[count - 1] = tokens[t].type;
-            loc = t;
-            break;
-          }
-          case TK_NEQ: {
-            stack[count - 1] = tokens[t].type;
-            loc = t;
-            break;
-          }
-          case TK_AND: {
-            stack[count - 1] = tokens[t].type;
-            loc = t;
-            break;
-          }
-          case TK_OR: {
-            stack[count] = tokens[t].type;
-            count++;
-            break;
-          }
-          case TK_NEG: {
-            stack[count - 1] = tokens[t].type;
-            loc = t;
-            break;
-          }
-          case TK_POI: {
-            stack[count - 1] = tokens[t].type;
-            loc = t;
-            break;
-          }
-          case TK_NOT: {
-            stack[count - 1] = tokens[t].type;
-            loc = t;
-            break;
-          }
-        }
-      }
-    }
-    else if (tokens[t].type == TK_EQ || tokens[t].type == TK_NEQ) {
-      if(count == 0) {
-        stack[count] = tokens[t].type;
-        count++;
-        loc = t;
-      }
-      else {
-        switch (stack[count - 1]) {
-          case TK_ADD: {
-            stack[count - 1] = tokens[t].type;
-            loc = t;
-            break;
-          }
-          case TK_MIN: {
-            stack[count - 1] = tokens[t].type;
-            loc = t;
-            break;
-          }
-          case TK_MUL: {
-            stack[count - 1] = tokens[t].type;
-            loc = t;
-            break;
-          }
-          case TK_DIV: {
-            stack[count - 1] = tokens[t].type;
-            loc = t;
-            break;
-          }
-          case TK_LP: { break; }
-          case TK_RP: { break; }
-          case TK_EQ: {
-            stack[count - 1] = tokens[t].type;
-            loc = t;
-            break;
-          }
-          case TK_NEQ: {
-            stack[count - 1] = tokens[t].type;
-            loc = t;
-            break;
-          }
-          case TK_AND: {
-            stack[count] = tokens[t].type;
-            count++;
-            break;
-          }
-          case TK_OR: {
-            stack[count] = tokens[t].type;
-            count++;
-            break;
-          }
-          case TK_NEG: {
-            stack[count - 1] = tokens[t].type;
-            loc = t;
-            break;
-          }
-          case TK_POI: {
-            stack[count - 1] = tokens[t].type;
-            loc = t;
-            break;
-          }
-          case TK_NOT: {
-            stack[count - 1] = tokens[t].type;
-            loc = t;
-            break;
-          }
-        }
-      }
-    }
-    else if (tokens[t].type == TK_NEG) {
-      if(count == 0) {
-        stack[count] = tokens[t].type;
-        count++;
-        loc = t;
-      }
-      else {
-        switch (stack[count - 1]) {
-          case TK_ADD: {
-            stack[count] = tokens[t].type;
-            count++;
-            break;
-          }
-          case TK_MIN: {
-            stack[count] = tokens[t].type;
-            count++;
-            break;
-          }
-          case TK_MUL: {
-            stack[count] = tokens[t].type;
-            count++;
-            break;
-          }
-          case TK_DIV: {
-            stack[count] = tokens[t].type;
-            count++;
-            break;
-          }
-          case TK_LP: { break; }
-          case TK_RP: { break; }
-          case TK_EQ: {
-            stack[count] = tokens[t].type;
-            count++;
-            break;
-          }
-          case TK_NEQ: {
-            stack[count] = tokens[t].type;
-            count++;
-            break;
-          }
-          case TK_AND: {
-            stack[count] = tokens[t].type;
-            count++;
-            break;
-          }
-          case TK_OR: {
-            stack[count] = tokens[t].type;
-            count++;
-            break;
-          }
-          case TK_NOT: {
-            stack[count] = tokens[t].type;
-            count++;
-            break;
-          }
-          case TK_POI: {
-            stack[count] = tokens[t].type;
-            count++;
-            break;
-          }
-          case TK_NEG: {
-            stack[count] = tokens[t].type;
-            count++;
-            break;
-          }
-        }
-      }
-    }
-    else if (tokens[t].type == TK_POI) {
-      if(count == 0) {
-        stack[count] = tokens[t].type;
-        count++;
-        loc = t;
-      }
-      else {
-        switch (stack[count - 1]) {
-          case TK_ADD: {
-            stack[count] = tokens[t].type;
-            count++;
-            break;
-          }
-          case TK_MIN: {
-            stack[count] = tokens[t].type;
-            count++;
-            break;
-          }
-          case TK_MUL: {
-            stack[count] = tokens[t].type;
-            count++;
-            break;
-          }
-          case TK_DIV: {
-            stack[count] = tokens[t].type;
-            count++;
-            break;
-          }
-          case TK_LP: { break; }
-          case TK_RP: { break; }
-          case TK_EQ: {
-            stack[count] = tokens[t].type;
-            count++;
-            break;
-          }
-          case TK_NEQ: {
-            stack[count] = tokens[t].type;
-            count++;
-            break;
-          }
-          case TK_AND: {
-            stack[count] = tokens[t].type;
-            count++;
-            break;
-          }
-          case TK_OR: {
-            stack[count] = tokens[t].type;
-            count++;
-            break;
-          }
-          case TK_NOT: {
-            stack[count] = tokens[t].type;
-            count++;
-            break;
-          }
-          case TK_POI: {
-            stack[count - 1] = tokens[t].type;
-            loc = t;
-            break;
-          }
-          case TK_NEG: {
-            stack[count - 1] = tokens[t].type;
-            loc = t;
-            break;
-          }
-        }
-      }
-    }
-    else if (tokens[t].type == TK_NOT) {
-      if(count == 0) {
-        stack[count] = tokens[t].type;
-        count++;
-        loc = t;
-      }
-      else {
-        switch (stack[count - 1]) {
-          case TK_ADD: {
-            stack[count] = tokens[t].type;
-            count++;
-            break;
-          }
-          case TK_MIN: {
-            stack[count] = tokens[t].type;
-            count++;
-            break;
-          }
-          case TK_MUL: {
-            stack[count] = tokens[t].type;
-            count++;
-            break;
-          }
-          case TK_DIV: {
-            stack[count] = tokens[t].type;
-            count++;
-            break;
-          }
-          case TK_LP: { break; }
-          case TK_RP: { break; }
-          case TK_EQ: {
-            stack[count] = tokens[t].type;
-            count++;
-            break;
-          }
-          case TK_NEQ: {
-            stack[count] = tokens[t].type;
-            count++;
-            break;
-          }
-          case TK_AND: {
-            stack[count] = tokens[t].type;
-            count++;
-            break;
-          }
-          case TK_OR: {
-            stack[count] = tokens[t].type;
-            count++;
-            break;
-          }
-          case TK_NOT: {
-            stack[count] = tokens[t].type;
-            count++;
-            break;
-          }
-          case TK_POI: {
-            stack[count] = tokens[t].type;
-            count++;
-            break;
-          }
-          case TK_NEG: {
-            stack[count - 1] = tokens[t].type;
-            loc = t;
-            break;
-          }
-        }
-      }
-    }
+    // else if (tokens[t].type == TK_MUL || tokens[t].type == TK_DIV){
+    //   if (count == 0) {
+    //     stack[count] = tokens[t].type;
+    //     loc = t;
+    //     count++;
+    //   }
+    //   else {
+    //     switch (stack[count - 1]) {
+    //       case TK_ADD: {
+    //         stack[count] = tokens[t].type;
+    //         count++;
+    //         break;
+    //       }
+    //       case TK_MIN: {
+    //         stack[count] = tokens[t].type;
+    //         count++;
+    //         break;
+    //       }
+    //       case TK_MUL: {
+    //         stack[count - 1] = tokens[t].type;
+    //         loc = t;
+    //         break;
+    //       }
+    //       case TK_DIV: {
+    //         stack[count - 1] = tokens[t].type;
+    //         loc = t;
+    //         break;
+    //       }
+    //       case TK_LP: { break; }
+    //       case TK_RP: { break; }
+    //       case TK_AND: {
+    //         stack[count] = tokens[t].type;
+    //         count++;
+    //         break;
+    //       }
+    //       case TK_OR: {
+    //         stack[count] = tokens[t].type;
+    //         count++;
+    //         break;
+    //       }
+    //       case TK_EQ: {
+    //         stack[count] = tokens[t].type;
+    //         count++;
+    //         break;
+    //       }
+    //       case TK_NEQ: {
+    //         stack[count] = tokens[t].type;
+    //         count++;
+    //         break;
+    //       }
+    //       case TK_NEG: {
+    //         stack[count - 1] = tokens[t].type;
+    //         loc = t;
+    //         break;
+    //       }
+    //       case TK_POI: {
+    //         stack[count - 1] = tokens[t].type;
+    //         loc = t;
+    //         break;
+    //       }
+    //       case TK_NOT: {
+    //         stack[count - 1] = tokens[t].type;
+    //         loc = t;
+    //         break;
+    //       }
+    //     }
+    //   }
+    // }
+    // else if (tokens[t].type == TK_OR) {
+    //   if(count == 0) {
+    //     stack[count] = tokens[t].type;
+    //     count++;
+    //     loc = t;
+    //   }
+    //   else {
+    //     switch (stack[count - 1]) {
+    //       case TK_ADD: {
+    //         stack[count - 1] = tokens[t].type;
+    //         loc = t;
+    //         break;
+    //       }
+    //       case TK_MIN: {
+    //         stack[count - 1] = tokens[t].type;
+    //         loc = t;
+    //         break;
+    //       }
+    //       case TK_MUL: {
+    //         stack[count - 1] = tokens[t].type;
+    //         loc = t;
+    //         break;
+    //       }
+    //       case TK_DIV: {
+    //         stack[count - 1] = tokens[t].type;
+    //         loc = t;
+    //         break;
+    //       }
+    //       case TK_LP: { break; }
+    //       case TK_RP: { break; }
+    //       case TK_EQ: {
+    //         stack[count - 1] = tokens[t].type;
+    //         loc = t;
+    //         break;
+    //       }
+    //       case TK_NEQ: {
+    //         stack[count - 1] = tokens[t].type;
+    //         loc = t;
+    //         break;
+    //       }
+    //       case TK_AND: {
+    //         stack[count - 1] = tokens[t].type;
+    //         loc = t;
+    //         break;
+    //       }
+    //       case TK_OR: {
+    //         stack[count - 1] = tokens[t].type;
+    //         loc = t;
+    //         break;
+    //       }
+    //       case TK_NEG: {
+    //         stack[count - 1] = tokens[t].type;
+    //         loc = t;
+    //         break;
+    //       }
+    //       case TK_POI: {
+    //         stack[count - 1] = tokens[t].type;
+    //         loc = t;
+    //         break;
+    //       }
+    //       case TK_NOT: {
+    //         stack[count - 1] = tokens[t].type;
+    //         loc = t;
+    //         break;
+    //       }
+    //     }
+    //   }
+    // }
+    // else if (tokens[t].type == TK_AND) {
+    //   if(count == 0) {
+    //     stack[count] = tokens[t].type;
+    //     count++;
+    //     loc = t;
+    //   }
+    //   else {
+    //     switch (stack[count - 1]) {
+    //       case TK_ADD: {
+    //         stack[count - 1] = tokens[t].type;
+    //         loc = t;
+    //         break;
+    //       }
+    //       case TK_MIN: {
+    //         stack[count - 1] = tokens[t].type;
+    //         loc = t;
+    //         break;
+    //       }
+    //       case TK_MUL: {
+    //         stack[count - 1] = tokens[t].type;
+    //         loc = t;
+    //         break;
+    //       }
+    //       case TK_DIV: {
+    //         stack[count - 1] = tokens[t].type;
+    //         loc = t;
+    //         break;
+    //       }
+    //       case TK_LP: { break; }
+    //       case TK_RP: { break; }
+    //       case TK_EQ: {
+    //         stack[count - 1] = tokens[t].type;
+    //         loc = t;
+    //         break;
+    //       }
+    //       case TK_NEQ: {
+    //         stack[count - 1] = tokens[t].type;
+    //         loc = t;
+    //         break;
+    //       }
+    //       case TK_AND: {
+    //         stack[count - 1] = tokens[t].type;
+    //         loc = t;
+    //         break;
+    //       }
+    //       case TK_OR: {
+    //         stack[count] = tokens[t].type;
+    //         count++;
+    //         break;
+    //       }
+    //       case TK_NEG: {
+    //         stack[count - 1] = tokens[t].type;
+    //         loc = t;
+    //         break;
+    //       }
+    //       case TK_POI: {
+    //         stack[count - 1] = tokens[t].type;
+    //         loc = t;
+    //         break;
+    //       }
+    //       case TK_NOT: {
+    //         stack[count - 1] = tokens[t].type;
+    //         loc = t;
+    //         break;
+    //       }
+    //     }
+    //   }
+    // }
+    // else if (tokens[t].type == TK_EQ || tokens[t].type == TK_NEQ) {
+    //   if(count == 0) {
+    //     stack[count] = tokens[t].type;
+    //     count++;
+    //     loc = t;
+    //   }
+    //   else {
+    //     switch (stack[count - 1]) {
+    //       case TK_ADD: {
+    //         stack[count - 1] = tokens[t].type;
+    //         loc = t;
+    //         break;
+    //       }
+    //       case TK_MIN: {
+    //         stack[count - 1] = tokens[t].type;
+    //         loc = t;
+    //         break;
+    //       }
+    //       case TK_MUL: {
+    //         stack[count - 1] = tokens[t].type;
+    //         loc = t;
+    //         break;
+    //       }
+    //       case TK_DIV: {
+    //         stack[count - 1] = tokens[t].type;
+    //         loc = t;
+    //         break;
+    //       }
+    //       case TK_LP: { break; }
+    //       case TK_RP: { break; }
+    //       case TK_EQ: {
+    //         stack[count - 1] = tokens[t].type;
+    //         loc = t;
+    //         break;
+    //       }
+    //       case TK_NEQ: {
+    //         stack[count - 1] = tokens[t].type;
+    //         loc = t;
+    //         break;
+    //       }
+    //       case TK_AND: {
+    //         stack[count] = tokens[t].type;
+    //         count++;
+    //         break;
+    //       }
+    //       case TK_OR: {
+    //         stack[count] = tokens[t].type;
+    //         count++;
+    //         break;
+    //       }
+    //       case TK_NEG: {
+    //         stack[count - 1] = tokens[t].type;
+    //         loc = t;
+    //         break;
+    //       }
+    //       case TK_POI: {
+    //         stack[count - 1] = tokens[t].type;
+    //         loc = t;
+    //         break;
+    //       }
+    //       case TK_NOT: {
+    //         stack[count - 1] = tokens[t].type;
+    //         loc = t;
+    //         break;
+    //       }
+    //     }
+    //   }
+    // }
+    // else if (tokens[t].type == TK_NEG) {
+    //   if(count == 0) {
+    //     stack[count] = tokens[t].type;
+    //     count++;
+    //     loc = t;
+    //   }
+    //   else {
+    //     switch (stack[count - 1]) {
+    //       case TK_ADD: {
+    //         stack[count] = tokens[t].type;
+    //         count++;
+    //         break;
+    //       }
+    //       case TK_MIN: {
+    //         stack[count] = tokens[t].type;
+    //         count++;
+    //         break;
+    //       }
+    //       case TK_MUL: {
+    //         stack[count] = tokens[t].type;
+    //         count++;
+    //         break;
+    //       }
+    //       case TK_DIV: {
+    //         stack[count] = tokens[t].type;
+    //         count++;
+    //         break;
+    //       }
+    //       case TK_LP: { break; }
+    //       case TK_RP: { break; }
+    //       case TK_EQ: {
+    //         stack[count] = tokens[t].type;
+    //         count++;
+    //         break;
+    //       }
+    //       case TK_NEQ: {
+    //         stack[count] = tokens[t].type;
+    //         count++;
+    //         break;
+    //       }
+    //       case TK_AND: {
+    //         stack[count] = tokens[t].type;
+    //         count++;
+    //         break;
+    //       }
+    //       case TK_OR: {
+    //         stack[count] = tokens[t].type;
+    //         count++;
+    //         break;
+    //       }
+    //       case TK_NOT: {
+    //         stack[count] = tokens[t].type;
+    //         count++;
+    //         break;
+    //       }
+    //       case TK_POI: {
+    //         stack[count] = tokens[t].type;
+    //         count++;
+    //         break;
+    //       }
+    //       case TK_NEG: {
+    //         stack[count] = tokens[t].type;
+    //         count++;
+    //         break;
+    //       }
+    //     }
+    //   }
+    // }
+    // else if (tokens[t].type == TK_POI) {
+    //   if(count == 0) {
+    //     stack[count] = tokens[t].type;
+    //     count++;
+    //     loc = t;
+    //   }
+    //   else {
+    //     switch (stack[count - 1]) {
+    //       case TK_ADD: {
+    //         stack[count] = tokens[t].type;
+    //         count++;
+    //         break;
+    //       }
+    //       case TK_MIN: {
+    //         stack[count] = tokens[t].type;
+    //         count++;
+    //         break;
+    //       }
+    //       case TK_MUL: {
+    //         stack[count] = tokens[t].type;
+    //         count++;
+    //         break;
+    //       }
+    //       case TK_DIV: {
+    //         stack[count] = tokens[t].type;
+    //         count++;
+    //         break;
+    //       }
+    //       case TK_LP: { break; }
+    //       case TK_RP: { break; }
+    //       case TK_EQ: {
+    //         stack[count] = tokens[t].type;
+    //         count++;
+    //         break;
+    //       }
+    //       case TK_NEQ: {
+    //         stack[count] = tokens[t].type;
+    //         count++;
+    //         break;
+    //       }
+    //       case TK_AND: {
+    //         stack[count] = tokens[t].type;
+    //         count++;
+    //         break;
+    //       }
+    //       case TK_OR: {
+    //         stack[count] = tokens[t].type;
+    //         count++;
+    //         break;
+    //       }
+    //       case TK_NOT: {
+    //         stack[count] = tokens[t].type;
+    //         count++;
+    //         break;
+    //       }
+    //       case TK_POI: {
+    //         stack[count - 1] = tokens[t].type;
+    //         loc = t;
+    //         break;
+    //       }
+    //       case TK_NEG: {
+    //         stack[count - 1] = tokens[t].type;
+    //         loc = t;
+    //         break;
+    //       }
+    //     }
+    //   }
+    // }
+    // else if (tokens[t].type == TK_NOT) {
+    //   if(count == 0) {
+    //     stack[count] = tokens[t].type;
+    //     count++;
+    //     loc = t;
+    //   }
+    //   else {
+    //     switch (stack[count - 1]) {
+    //       case TK_ADD: {
+    //         stack[count] = tokens[t].type;
+    //         count++;
+    //         break;
+    //       }
+    //       case TK_MIN: {
+    //         stack[count] = tokens[t].type;
+    //         count++;
+    //         break;
+    //       }
+    //       case TK_MUL: {
+    //         stack[count] = tokens[t].type;
+    //         count++;
+    //         break;
+    //       }
+    //       case TK_DIV: {
+    //         stack[count] = tokens[t].type;
+    //         count++;
+    //         break;
+    //       }
+    //       case TK_LP: { break; }
+    //       case TK_RP: { break; }
+    //       case TK_EQ: {
+    //         stack[count] = tokens[t].type;
+    //         count++;
+    //         break;
+    //       }
+    //       case TK_NEQ: {
+    //         stack[count] = tokens[t].type;
+    //         count++;
+    //         break;
+    //       }
+    //       case TK_AND: {
+    //         stack[count] = tokens[t].type;
+    //         count++;
+    //         break;
+    //       }
+    //       case TK_OR: {
+    //         stack[count] = tokens[t].type;
+    //         count++;
+    //         break;
+    //       }
+    //       case TK_NOT: {
+    //         stack[count] = tokens[t].type;
+    //         count++;
+    //         break;
+    //       }
+    //       case TK_POI: {
+    //         stack[count] = tokens[t].type;
+    //         count++;
+    //         break;
+    //       }
+    //       case TK_NEG: {
+    //         stack[count - 1] = tokens[t].type;
+    //         loc = t;
+    //         break;
+    //       }
+    //     }
+    //   }
+    // }
     t++;
   }
   free(stack);
