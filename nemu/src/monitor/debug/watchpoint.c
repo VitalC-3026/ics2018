@@ -174,6 +174,7 @@ bool check_wp(){
         printf("%d:\t%s\tchanges from\t%d\tto\t%d.\n", curr->NO, curr->expr, curr->value, val);
         curr->value = val;
       }
+      curr = curr->next;
     }
     return flag;
   }
