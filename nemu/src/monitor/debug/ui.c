@@ -50,6 +50,7 @@ static int cmd_w(char *args); // set watchpoints
 
 static int cmd_d(char *args); // delete watchpoints
 
+
 static struct {
   char *name;
   char *description;
@@ -144,17 +145,23 @@ static int cmd_x(char* args) {
     printf("Too few arguments!\n");
   }
   int num = atoi(arg);
+  arg = strtok(NULL, " ");
+  if (arg == NULL) {
+    printf("Too few arguments!\n");
+    return 0;
+  }
   if (strtok(NULL, " ") != NULL) {
     printf("Too many arguments!\n");
     return 0;
   }
-  if (arg[0] != '0' || arg[1] != 'x') {
-    printf("Unknown address!\n");
+  // char* str;
+  bool success;
+  vaddr_t vaddr = expr(arg, &success);
+  if (!success) {
+    printf("Unvalid address!\n");
     return 0;
   }
-  char* str;
-  vaddr_t vaddr;
-  vaddr = strtol(arg, &str, 16); // get the virtual address from the command line
+  // vaddr = strtol(arg, &str, 16); // get the virtual address from the command line
   for(int i = 0; i < num; i++) {
     uint32_t data = vaddr_read(vaddr + 4 * i, 4);
     printf("0x%08x ", vaddr + 4 * i);
