@@ -50,8 +50,6 @@ static int cmd_w(char *args); // set watchpoints
 
 static int cmd_d(char *args); // delete watchpoints
 
-static int cmd_t(char *args);
-
 static struct {
   char *name;
   char *description;
