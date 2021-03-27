@@ -144,11 +144,6 @@ static int cmd_x(char* args) {
     printf("Too few arguments!\n");
   }
   int num = atoi(arg);
-  arg = strtok(NULL, " ");
-  if (arg == NULL) {
-    printf("Too few arguments!\n");
-    return 0;
-  }
   if (strtok(NULL, " ") != NULL) {
     printf("Too many arguments!\n");
     return 0;
