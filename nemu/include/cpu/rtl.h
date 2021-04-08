@@ -141,7 +141,11 @@ static inline void rtl_sext(rtlreg_t* dest, const rtlreg_t* src1, int width) {
 
 static inline void rtl_push(const rtlreg_t* src1) {
   // esp <- esp - 4
+  // $esp-4: increase space of stack
+  rtl_subi(&cpu.esp, &cpu.esp, 4);
   // M[esp] <- src1
+  // push eip in the top then call the function
+  rtl_sm(&cpu.esp, 4, src1);
   TODO();
 }
 
