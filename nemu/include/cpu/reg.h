@@ -40,6 +40,20 @@ typedef struct {
   };
   vaddr_t eip;
 
+  union{
+      uint32_t val; // 32bits
+      struct{
+          uint32_t CF:1;
+          unsigned:5;
+          uint32_t ZF:1;
+          uint32_t SF:1;
+          unsigned:1;
+          uint32_t IF:1;
+          unsigned:1;
+          uint32_t OF:1;
+          unsigned:20;
+      }; // addr same as val, 32bits
+  } eflags;
 } CPU_state;
 
 extern CPU_state cpu;

@@ -3,7 +3,7 @@
 
 #include "nemu.h"
 
-extern rtlreg_t t0, t1, t2, t3;
+extern rtlreg_t t0, t1, t2, t3, s0, s1;
 extern const rtlreg_t tzero;
 
 /* RTL basic instructions */
@@ -113,10 +113,10 @@ static inline void rtl_sr(int r, int width, const rtlreg_t* src1) {
 
 #define make_rtl_setget_eflags(f) \
   static inline void concat(rtl_set_, f) (const rtlreg_t* src) { \
-    TODO(); \
+    cpu.eflags.f = *src; \
   } \
   static inline void concat(rtl_get_, f) (rtlreg_t* dest) { \
-    TODO(); \
+    *dest = cpu.eflags.f; \
   }
 
 make_rtl_setget_eflags(CF)
@@ -177,22 +177,61 @@ static inline void rtl_neq0(rtlreg_t* dest, const rtlreg_t* src1) {
 
 static inline void rtl_msb(rtlreg_t* dest, const rtlreg_t* src1, int width) {
   // dest <- src1[width * 8 - 1]
-  TODO();
+  // TODO();
+  rtl_shri(dest, src1, width * 8 - 1);
 }
 
 static inline void rtl_update_ZF(const rtlreg_t* result, int width) {
   // eflags.ZF <- is_zero(result[width * 8 - 1 .. 0])
-  TODO();
+  //TODO();
+  uint32_t mask;
+  switch(width){
+    case 2: {
+      mask = 0xff;
+      break;
+    }
+    case 4: {
+      mask = 0xffff;
+      break;
+    }
+    case 8: {
+      mask = 0xffffffff;
+      break;
+    }
+    default:
+      assert(0);
+  }
+  t1 = *result & mask;
+  rtl_set_ZF(&t1);
 }
 
 static inline void rtl_update_SF(const rtlreg_t* result, int width) {
   // eflags.SF <- is_sign(result[width * 8 - 1 .. 0])
-  TODO();
+  // TODO();
+  rtl_msb(&t1, result, width);
+  rtl_set_SF(&t1);
 }
 
 static inline void rtl_update_ZFSF(const rtlreg_t* result, int width) {
   rtl_update_ZF(result, width);
   rtl_update_SF(result, width);
+}
+
+static inline void rtl_is_overthrow(rtlreg_t* ret, rtlreg_t* arith_res, const rtlreg_t* src1, const rtlreg_t* src2, int width) {
+  t2 = (*src1 >> (width * 8 - 1)) == 1 ? 1 : 0;
+  t3 = (*src2 >> (width * 8 - 1)) == 1 ? 1 : 0;
+  s0 = (*arith_res >> (width * 8 - 1) == 1 ? 1 : 0);
+  if (t2 ^ t3) {
+    if (t2 ^ s0) {
+      *ret = 1;
+    }
+    else {
+      *ret = 0;
+    }
+  } 
+  else {
+    *ret = 0;
+  }
 }
 
 #endif
