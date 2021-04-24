@@ -16,8 +16,8 @@ make_EHelper(sub) {
   // TODO();
   rtl_sub(&t0, &id_dest->val, &id_src->val);
   rtl_sltu(&t1, &id_dest->val, &t0); // if minuend(&id_dest->val) < res, then substract with borrow => CF=1
-  // operand_write(id_dest, &t0);
   rtl_set_CF(&t1);
+  operand_write(id_dest, &t0);
   rtl_update_ZFSF(&t0, id_dest->width);
   rtl_is_sub_overthrow(&t1, &t0, &id_dest->val, &id_src->val, id_dest->width);
   rtl_set_OF(&t1);
@@ -27,8 +27,7 @@ make_EHelper(sub) {
 make_EHelper(cmp) {
   // TODO();
   rtl_sub(&t0, &id_dest->val, &id_src->val);
-  rtl_sltu(&t1, &id_dest->val, &t0); // if minuend(&id_dest->val) < res, then substract with borrow => CF=1
-  operand_write(id_dest, &t0);
+  rtl_sltu(&t1, &id_dest->val, &t0); 
   rtl_set_CF(&t1);
   rtl_update_ZFSF(&t0, id_dest->width);
   rtl_is_sub_overthrow(&t1, &t0, &id_dest->val, &id_src->val, id_dest->width);
