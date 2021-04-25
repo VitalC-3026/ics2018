@@ -184,7 +184,7 @@ static inline void rtl_msb(rtlreg_t* dest, const rtlreg_t* src1, int width) {
 static inline void rtl_update_ZF(const rtlreg_t* result, int width) {
   // eflags.ZF <- is_zero(result[width * 8 - 1 .. 0])
   //TODO();
-  uint32_t mask;
+  uint32_t mask = 0;
   switch(width){
     case 1: {
       mask = 0xff;
@@ -201,7 +201,7 @@ static inline void rtl_update_ZF(const rtlreg_t* result, int width) {
     default:
       assert(0);
   }
-  t1 = *result & mask;
+  t1 = !(*result & mask);
   rtl_set_ZF(&t1);
 }
 

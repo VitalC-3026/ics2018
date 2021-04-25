@@ -207,7 +207,6 @@ void difftest_step(uint32_t eip) {
 
   if (diff) {
     printf("EFLAGS in QEMU:0x%08x\n",r.eflags);
-    printf("ZF:%d\n", r.eflags);
     printf("EFLAGS in NEMU:0x%08x\n",cpu.eflags.val);
     printf("NEMU eflags:\n");
     printf("ZF:%d\n",cpu.eflags.ZF);
