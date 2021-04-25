@@ -13,6 +13,8 @@ make_EHelper(lidt);
 make_EHelper(nop);
 make_EHelper(lea);
 
+make_EHelper(test);
+
 make_EHelper(call);
 make_EHelper(call_rm);
 make_EHelper(ret);
