@@ -186,15 +186,15 @@ static inline void rtl_update_ZF(const rtlreg_t* result, int width) {
   //TODO();
   uint32_t mask;
   switch(width){
-    case 2: {
+    case 1: {
       mask = 0xff;
       break;
     }
-    case 4: {
+    case 2: {
       mask = 0xffff;
       break;
     }
-    case 8: {
+    case 4: {
       mask = 0xffffffff;
       break;
     }
