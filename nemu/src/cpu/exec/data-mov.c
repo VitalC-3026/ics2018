@@ -21,35 +21,81 @@ make_EHelper(pop) {
 make_EHelper(pusha) {
   // TODO();
   // R_EAX, R_ECX, R_EDX, R_EBX, R_ESP, R_EBP, R_ESI, R_EDI
-  t0 = reg_l(R_ESP);
-  rtl_push(&reg_l(R_EAX));
-  rtl_push(&reg_l(R_ECX));
-  rtl_push(&reg_l(R_EDX));
-  rtl_push(&reg_l(R_EBX));
-  rtl_push(&t0);
-  rtl_push(&reg_l(R_EBP));
-  rtl_push(&reg_l(R_ESI));
-  rtl_push(&reg_l(R_EDI));
+  if (decoding.is_operand_size_16) {
+    t0 = reg_w(R_SP);
+    t1 = reg_w(R_AX);
+    rtl_push(&t1);
+    t1 = reg_w(R_CX);
+    rtl_push(&t1);
+    t1 = reg_w(R_DX);
+    rtl_push(&t1);
+    t1 = reg_w(R_BX);
+    rtl_push(&t1);
+    rtl_push(&t0);
+    t1 = reg_w(R_BP);
+    rtl_push(&t1);
+    t1 = reg_w(R_SI);
+    rtl_push(&t1);
+    t1 = reg_w(R_DI);
+    rtl_push(&t1);
+  }
+  else {
+    t0 = reg_l(R_ESP);
+    rtl_push(&cpu.eax);
+    rtl_push(&cpu.ecx);
+    rtl_push(&cpu.edx);
+    rtl_push(&cpu.ebx);
+    rtl_push(&t0);
+    rtl_push(&cpu.ebp);
+    rtl_push(&cpu.esi);
+    rtl_push(&cpu.edi);
+  }
   print_asm("pusha");
 }
 
 make_EHelper(popa) {
   // TODO();
-  rtl_pop(&reg_l(R_EDI));
-  rtl_pop(&reg_l(R_ESI));
-  rtl_pop(&reg_l(R_EBP));
-  rtl_pop(&t0);
-  rtl_pop(&reg_l(R_EBX));
-  rtl_pop(&reg_l(R_EDX));
-  rtl_pop(&reg_l(R_ECX));
-  rtl_pop(&reg_l(R_EAX));
+  if (decoding.is_operand_size_16) {
+    rtl_pop(&t0);
+    reg_w(R_DI) = t0;
+    rtl_pop(&t0);
+    reg_w(R_SI) = t0;
+    rtl_pop(&t0);
+    reg_w(R_BP) = t0;
+    rtl_pop(&t0);
+    rtl_pop(&t0);
+    reg_w(R_BX) = t0;
+    rtl_pop(&t0);
+    reg_w(R_DX) = t0;
+    rtl_pop(&t0);
+    reg_w(R_CX) = t0;
+    rtl_pop(&t0);
+    reg_w(R_AX) = t0;
+  }
+  else {
+    rtl_pop(&cpu.edi);
+    rtl_pop(&cpu.esi);
+    rtl_pop(&cpu.ebp);
+    rtl_pop(&t0);
+    rtl_pop(&cpu.ebx);
+    rtl_pop(&cpu.edx);
+    rtl_pop(&cpu.ecx);
+    rtl_pop(&cpu.eax);
+  }
+  
   print_asm("popa");
 }
 
 make_EHelper(leave) {
   // TODO();
   rtl_mv(&cpu.esp, &cpu.ebp);
-  rtl_pop(&cpu.ebp);
+  if (decoding.is_operand_size_16) {
+    rtl_pop(&t0);
+    reg_w(R_BP) = t0;
+  }
+  else {
+    rtl_pop(&cpu.ebp);
+  }
   print_asm("leave");
 }
 
