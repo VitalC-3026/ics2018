@@ -30,24 +30,28 @@ make_EHelper(cmp) {
   rtl_update_ZFSF(&t0, id_dest->width);
   rtl_sltu(&t1, &id_dest->val, &t0); 
   rtl_set_CF(&t1);
-  //rtl_is_sub_overthrow(&t1, &t0, &id_dest->val, &id_src->val, id_dest->width);
-  rtl_xor(&t0, &id_dest->val, &id_src->val);
-  rtl_xor(&t1, &id_dest->val, &t2);
-  rtl_and(&t0, &t0, &t1);
-  rtl_msb(&t0, &t0, id_dest->width);
-  rtl_set_OF(&t0);
+  rtl_is_sub_overthrow(&t1, &t0, &id_dest->val, &id_src->val, id_dest->width);
+  rtl_set_OF(&t1);
   print_asm_template2(cmp);
 }
 
 make_EHelper(inc) {
-  TODO();
-
+  // TODO();
+  rtl_addi(&t0, &id_dest->val, 1);
+  operand_write(id_dest, &t0);
+  rtl_update_ZFSF(&t0, id_dest->width);
+  rtl_is_add_overthrow(&t1, &t0, &id_dest->val, &id_src->val, id_dest->width);
+  rtl_set_OF(&t1);
   print_asm_template1(inc);
 }
 
 make_EHelper(dec) {
-  TODO();
-
+  // TODO();
+  rtl_subi(&t0, &id_dest->val, 1);
+  operand_write(id_dest, &t0);
+  rtl_update_ZFSF(&t0, id_dest->width);
+  rtl_is_sub_overthrow(&t1, &t0, &id_dest->val, &id_src->val, id_dest->width);
+  rtl_set_OF(&t1);
   print_asm_template1(dec);
 }
 
