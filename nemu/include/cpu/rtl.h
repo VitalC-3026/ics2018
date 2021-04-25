@@ -31,7 +31,6 @@ static inline void rtl_li(rtlreg_t* dest, uint32_t imm) {
     *dest = concat(c_, name) (*src1, imm); \
   }
 
-
 make_rtl_arith_logic(add)
 make_rtl_arith_logic(sub)
 make_rtl_arith_logic(and)

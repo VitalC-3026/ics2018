@@ -11,6 +11,7 @@ make_EHelper(popa);
 make_EHelper(cltd);
 make_EHelper(cwtl);
 make_EHelper(lea);
+make_EHelper(leave);
 
 // prefix.c
 make_EHelper(real);
@@ -23,9 +24,14 @@ make_EHelper(nemu_trap);
 
 // system.c
 make_EHelper(lidt);
+make_EHelper(iret);
+make_EHelper(int);
+make_EHelper(in);
+make_EHelper(out);
 
 // control.c
 make_EHelper(jmp);
+make_EHelper(jmp_rm);
 make_EHelper(jcc);
 make_EHelper(call);
 make_EHelper(call_rm);
@@ -45,12 +51,17 @@ make_EHelper(div);
 make_EHelper(idiv);
 make_EHelper(inc);
 make_EHelper(dec);
+make_EHelper(neg);
 
 // logic.c
 make_EHelper(test);
 make_EHelper(and);
 make_EHelper(or);
 make_EHelper(xor);
+make_EHelper(shl);
+make_EHelper(shr);
+make_EHelper(sar);
+make_EHelper(not);
 
 // cc.c
 make_EHelper(setcc);
