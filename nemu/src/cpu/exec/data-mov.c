@@ -128,6 +128,9 @@ make_EHelper(cwtl) {
     TODO();
     // rtl_sext(&t0, &cpu.eax, 1);
     // cpu.eax = (cpu.eax & 0xffff0000) | (t0 & 0xffff);
+    rtl_shli(&cpu.eax, &cpu.eax, 24);
+    rtl_sari(&cpu.eax, &cpu.eax, 16);
+    rtl_shri(&cpu.eax, &cpu.eax, 16);
   }
   else {
     // TODO();
