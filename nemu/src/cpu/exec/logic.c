@@ -81,9 +81,3 @@ make_EHelper(not) {
   operand_write(id_dest, &t0);
   print_asm_template1(not);
 }
-
-make_EHelper(rol) {
-  TODO();
-
-  print_asm_template1(rol);
-}
