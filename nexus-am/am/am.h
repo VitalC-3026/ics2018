@@ -17,6 +17,8 @@
 
 #define MAX_CPU 8
 
+#define HAS_SERIAL
+
 typedef struct _Area {
   void *start, *end;
 } _Area; 
