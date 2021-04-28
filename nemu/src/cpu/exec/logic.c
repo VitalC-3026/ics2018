@@ -31,7 +31,7 @@ make_EHelper(xor) {
 
 make_EHelper(or) {
   // TODO();
-  rtl_xor(&t2, &id_dest->val, &id_src->val);
+  rtl_or(&t2, &id_dest->val, &id_src->val); //TODO-ADD xor->or
   operand_write(id_dest, &t2);
   rtl_update_ZFSF(&t2, id_dest->width);
   rtl_set_CF(&tzero);
@@ -51,7 +51,7 @@ make_EHelper(sar) {
 make_EHelper(shl) {
   // TODO();
   // unnecessary to update CF and OF in NEMU
-  rtl_shli(&t0, &id_dest->val, id_src->val);
+  rtl_shl(&t0, &id_dest->val, &id_src->val); // TODO-ADD shli->shl
   rtl_update_ZFSF(&t0, id_dest->width);
   operand_write(id_dest, &t0);
   print_asm_template2(shl);
