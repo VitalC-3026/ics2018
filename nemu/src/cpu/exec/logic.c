@@ -86,20 +86,22 @@ make_EHelper(rol) {
   t0 = id_src->val;
   switch(id_dest->width) {
     case 1:
-      rtl_li(&t1, (id_dest->val & 0x80) ? 1 : 0);
+      rtl_li(&t1, 0x80);
       break;
     case 2:
-      rtl_li(&t1, (id_dest->val & 0x8000) ? 1 : 0);
+      rtl_li(&t1, 0x8000);
       break;
     case 4:
-      rtl_li(&t1, (id_dest->val & 0x80000000) ? 1 : 0);
+      rtl_li(&t1, 0x80000000);
       break;
     default:
       panic("rol: no support width");
   }
+
   while (t0 != 0) {
-    rtl_shri(&id_dest->val, &id_dest->val, 1);
-    rtl_add(&id_dest->val, &id_dest->val, &t1);
+    rtl_li(&t2, (id_dest->val & t1) ? 1 : 0);
+    rtl_shli(&id_dest->val, &id_dest->val, 1);
+    rtl_add(&id_dest->val, &id_dest->val, &t2);
     t0 -= 1;
   }
   operand_write(id_dest, &id_dest->val);
