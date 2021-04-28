@@ -99,21 +99,21 @@ make_EHelper(rol) {
   }
   while (t0 != 0) {
     rtl_shli(&id_dest->val, &id_dest->val, 1);
-    rtl_addi(&id_dest->val, &id_dest->val, (int)t1);
+    rtl_add(&id_dest->val, &id_dest->val, &t1);
     t0 -= 1;
   }
   operand_write(id_dest, &id_dest->val);
-  if (id_src->val == 1) {
-    rtl_get_CF(&t0);
-    rtl_li(&t1, ((1 << (id_dest->width * 8 - 1)) & id_dest->val) ? 1 : 0);
-    if (t0 == t1) {
-      rtl_set_OF(&tzero);
-    } 
-    else {
-      t0 = 1;
-      rtl_set_OF(&t0);
-    }
-  }
+  // if (id_src->val == 1) {
+  //   rtl_get_CF(&t0);
+  //   rtl_li(&t1, ((1 << (id_dest->width * 8 - 1)) & id_dest->val) ? 1 : 0);
+  //   if (t0 == t1) {
+  //     rtl_set_OF(&tzero);
+  //   } 
+  //   else {
+  //     t0 = 1;
+  //     rtl_set_OF(&t0);
+  //   }
+  // }
   
   print_asm_template2(rol);
 }
