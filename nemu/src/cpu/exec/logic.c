@@ -81,3 +81,39 @@ make_EHelper(not) {
   operand_write(id_dest, &t0);
   print_asm_template1(not);
 }
+
+make_EHelper(rol) {
+  t0 = id_src->val;
+  switch(id_dest->width) {
+    case 1:
+      rtl_li(&t1, (id_dest->val & 0x80) ? 1 : 0);
+      break;
+    case 2:
+      rtl_li(&t1, (id_dest->val & 0x8000) ? 1 : 0);
+      break;
+    case 3:
+      rtl_li(&t1, (id_dest->val & 0x80000000) ? 1 : 0);
+      break;
+    default:
+      panic("rol: no support width");
+  }
+  while (t0 != 0) {
+    rtl_shli(&id_dest->val, &id_dest->val, 1);
+    rtl_addi(&id_dest->val, &id_dest->val, (int)t1);
+    t0 -= 1;
+  }
+  operand_write(id_dest, &id_dest->val);
+  if (id_src->val == 1) {
+    rtl_get_CF(&t0);
+    rtl_li(&t1, ((1 << (id_dest->width * 8 - 1)) & id_dest->val) ? 1 : 0);
+    if (t0 == t1) {
+      rtl_set_OF(&tzero);
+    } 
+    else {
+      t0 = 1;
+      rtl_set_OF(&t0);
+    }
+  }
+  
+  print_asm_template2(rol);
+}
