@@ -53,7 +53,6 @@ extern "C" {
 
 #define BENCHMARK_LIST(def) \
   def(qsort, "qsort", QSORT_SM, QSORT_LG, "Quick sort") \
-  def(queen, "queen", QUEEN_SM, QUEEN_LG, "Queen placement") \
   def(   bf,    "bf",    BF_SM,    BF_LG, "Brainf**k interpreter") \
   def(  fib,   "fib",   FIB_SM,   FIB_LG, "Fibonacci number") \
   def(sieve, "sieve", SIEVE_SM, SIEVE_LG, "Eratosthenes sieve") \
