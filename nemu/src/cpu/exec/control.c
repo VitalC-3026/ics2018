@@ -25,33 +25,27 @@ make_EHelper(jmp_rm) {
 
 make_EHelper(call) {
   // the target address is calculated at the decode stage
-  //TODO();
-
-  //首先将eip进行压栈 之后进行跳转
-  rtl_li(&t2, decoding.seq_eip);
-  rtl_push(&t2);
-
-  //设置跳转
+  // TODO();
+  rtl_li(&t0, decoding.seq_eip);
+  rtl_push(&t0);
   decoding.is_jmp = 1;
-
+  // rtl_push(eip); change the series and push codes
   print_asm("call %x", decoding.jmp_eip);
 }
 
 make_EHelper(ret) {
   //TODO();
-  rtl_pop(&t2);
-  decoding.jmp_eip = t2; //栈数据修改eip
-  decoding.is_jmp = 1; //设置jmp标志
-
+  rtl_pop(&decoding.jmp_eip);
+  decoding.is_jmp = 1;
   print_asm("ret");
 }
 
 make_EHelper(call_rm) {
-  //TODO();
-  rtl_li(&t2, decoding.seq_eip);
-  rtl_push(&t2);
+  // TODO();
+  rtl_li(&t0, decoding.seq_eip);
+  rtl_push(&t0);
   decoding.jmp_eip = id_dest->val;
   decoding.is_jmp = 1;
-
+  // rtl_push(eip);
   print_asm("call *%s", id_dest->str);
 }
