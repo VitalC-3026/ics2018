@@ -804,6 +804,7 @@ int main ()
 	/* Ch_1_Glob == 'A', Ch_2_Glob == 'B', Bool_Glob == true */
       Int_1_Loc = 2;
       Int_2_Loc = 3;
+      Int_3_Loc = 0;
       strcpy (Str_2_Loc, "DHRYSTONE PROGRAM, 2'ND STRING");
       Enum_Loc = Ident_2;
       Bool_Glob = ! Func_2 (Str_1_Loc, Str_2_Loc);
