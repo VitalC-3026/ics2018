@@ -42,9 +42,9 @@ static inline make_DopHelper(SI) {
   t0 = instr_fetch(eip, op->width);
   rtl_sext(&t0, &t0, op->width); // sign extend => no sign extend specific for instructions
   // TODO-ADD
-  if (op->width == 1) {
-    t0 = (int8_t)t0;
-  }
+  // if (op->width == 1) {
+  //   t0 = (int8_t)t0;
+  // }
   op->imm = t0;
 
   rtl_li(&op->val, op->simm);
