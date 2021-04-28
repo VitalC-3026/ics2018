@@ -83,7 +83,7 @@ make_EHelper(not) {
 }
 
 make_EHelper(rol) {
-  t0 = id_src->val;
+  rtl_li(&t0, id_src->val);
   switch(id_dest->width) {
     case 1:
       rtl_li(&t1, 0x80);
