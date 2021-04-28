@@ -91,7 +91,7 @@ make_EHelper(rol) {
     case 2:
       rtl_li(&t1, (id_dest->val & 0x8000) ? 1 : 0);
       break;
-    case 3:
+    case 4:
       rtl_li(&t1, (id_dest->val & 0x80000000) ? 1 : 0);
       break;
     default:
