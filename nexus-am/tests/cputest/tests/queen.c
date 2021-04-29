@@ -34,8 +34,8 @@ static unsigned int ans;
 // }
 
 int main() {
-    int res[] = {92, 14200};
-    int size[] = {8, 12};
+    int res[] = {92};
+    int size[] = {8};
     for (int i = 0; i < 2; i++) {
         FULL = (1 << size[i]) - 1;
         ans = 0;
