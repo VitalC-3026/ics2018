@@ -36,7 +36,7 @@ static unsigned int ans;
 int main() {
     int res[] = {92};
     int size[] = {8};
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < 1; i++) {
         FULL = (1 << size[i]) - 1;
         ans = 0;
         ans = dfs(0, 0, 0);
