@@ -209,7 +209,12 @@ static inline void rtl_update_ZF(const rtlreg_t* result, int width) {
     default:
       assert(0);
   }
-  t1 = !(*result & mask);
+  if ((*result & mask) == 0) {
+    t1 = 1;
+  }
+  else {
+    t1 = 0;
+  }
   rtl_set_ZF(&t1);
 }
 
