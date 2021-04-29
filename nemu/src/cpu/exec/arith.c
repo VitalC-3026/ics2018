@@ -87,13 +87,13 @@ make_EHelper(neg) {
   t0 = id_dest->val == 0 ? 0 : 1;
   rtl_set_CF(&t0);
   t0 = 0;
-  rtl_sub(&t1, &t0, &id_dest->val);
+  rtl_sub(&t1, &tzero, &id_dest->val);
   printf("neg neg res: %d\n", t1);
   printf("neg id_dest->width: %d\n", id_dest->width);
   rtl_update_ZFSF(&t1, id_dest->width);
-  rtl_is_sub_overthrow(&t2, &t1, &tzero, &id_dest->val, id_dest->width);
+  rtl_is_sub_overthrow(&t0, &t1, &tzero, &id_dest->val, id_dest->width);
   operand_write(id_dest, &t1);
-  rtl_set_OF(&t2);
+  rtl_set_OF(&t0);
   // rtl_xor(&t0, &id_dest->val, &id_src->val);
   // rtl_xor(&t1, &id_dest->val, &t2);
   // rtl_and(&t0, &t0, &t1);

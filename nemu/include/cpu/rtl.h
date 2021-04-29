@@ -210,19 +210,19 @@ static inline void rtl_update_ZF(const rtlreg_t* result, int width) {
       assert(0);
   }
   if ((*result & mask) == 0) {
-    t1 = 1;
+    t3 = 1;
   }
   else {
-    t1 = 0;
+    t3 = 0;
   }
-  rtl_set_ZF(&t1);
+  rtl_set_ZF(&t3);
 }
 
 static inline void rtl_update_SF(const rtlreg_t* result, int width) {
   // eflags.SF <- is_sign(result[width * 8 - 1 .. 0])
   // TODO();
-  rtl_msb(&t1, result, width);
-  rtl_set_SF(&t1);
+  rtl_msb(&t3, result, width);
+  rtl_set_SF(&t3);
 }
 
 static inline void rtl_update_ZFSF(const rtlreg_t* result, int width) {
