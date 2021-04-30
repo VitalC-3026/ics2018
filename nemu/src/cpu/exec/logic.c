@@ -2,8 +2,8 @@
 
 make_EHelper(test) {
   // TODO();
-  rtl_and(&t2, &id_dest->val, &id_src->val);
-  rtl_update_ZFSF(&t2, id_dest->width);
+  rtl_and(&t0, &id_dest->val, &id_src->val);
+  rtl_update_ZFSF(&t0, id_dest->width);
   rtl_set_CF(&tzero);
   rtl_set_OF(&tzero);
   print_asm_template2(test);
@@ -11,9 +11,9 @@ make_EHelper(test) {
 
 make_EHelper(and) {
   // TODO();
-  rtl_and(&t2, &id_dest->val, &id_src->val);
-  operand_write(id_dest, &t2);
-  rtl_update_ZFSF(&t2, id_dest->width);
+  rtl_and(&t0, &id_dest->val, &id_src->val);
+  operand_write(id_dest, &t0);
+  rtl_update_ZFSF(&t0, id_dest->width);
   rtl_set_CF(&tzero);
   rtl_set_OF(&tzero);
   print_asm_template2(and);
@@ -21,9 +21,9 @@ make_EHelper(and) {
 
 make_EHelper(xor) {
   // TODO();
-  rtl_xor(&t2, &id_dest->val, &id_src->val);
-  operand_write(id_dest, &t2);
-  rtl_update_ZFSF(&t2, id_dest->width);
+  rtl_xor(&t0, &id_dest->val, &id_src->val);
+  operand_write(id_dest, &t0);
+  rtl_update_ZFSF(&t0, id_dest->width);
   rtl_set_CF(&tzero);
   rtl_set_OF(&tzero);
   print_asm_template2(xor);
@@ -31,9 +31,9 @@ make_EHelper(xor) {
 
 make_EHelper(or) {
   // TODO();
-  rtl_or(&t2, &id_dest->val, &id_src->val); //TODO-ADD xor->or
-  operand_write(id_dest, &t2);
-  rtl_update_ZFSF(&t2, id_dest->width);
+  rtl_or(&t0, &id_dest->val, &id_src->val); //TODO-ADD xor->or
+  operand_write(id_dest, &t0);
+  rtl_update_ZFSF(&t0, id_dest->width);
   rtl_set_CF(&tzero);
   rtl_set_OF(&tzero);
   print_asm_template2(or);

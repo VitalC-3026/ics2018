@@ -41,7 +41,7 @@ extern "C" {
 #define SIEVE_SM {     100,   1 KB,     0, 0x00000019}
 #define SIEVE_LG {10000000,   2 MB, 42406, 0x000a2403}
 #define  PZ15_SM {       0,   2 MB,     0, 0x00000006}
-#define  PZ15_LG {       0,   2 MB,     0, 0x00000006}
+#define  PZ15_LG {       1,   8 MB,  5792, 0x00068b8c}
 #define DINIC_SM {      10,   1 MB,     0, 0x0000019c}
 #define DINIC_LG {     128,   1 MB, 13536, 0x0000c248}
 #define  LZIP_SM {     128,   1 MB,     0, 0x03e9fa7d}
