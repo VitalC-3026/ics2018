@@ -131,6 +131,12 @@ static int cmd_info(char* args) {
       printf("ebp: 0x%08x.\n", cpu.ebp);
       printf("esi: 0x%08x.\n", cpu.esi);
       printf("edi: 0x%08x.\n", cpu.edi);
+      printf("NEMU eflags:\n");
+      printf("ZF:%d\n",cpu.eflags.ZF);
+      printf("SF:%d\n",cpu.eflags.SF);
+      printf("OF:%d\n",cpu.eflags.OF);
+      printf("CF:%d\n",cpu.eflags.CF);
+      printf("IF:%d\n",cpu.eflags.IF);
     }
     else if (strcmp(arg, "w") == 0) {
       show_wp();
