@@ -40,8 +40,8 @@ typedef struct {
   };
   vaddr_t eip;
   struct{
-    uint32_t i_limit;
-    uint32_t i_base;
+    uint32_t limit; // actually 16bits
+    uint32_t base;
   }idtr;
   uint32_t cs;
 
