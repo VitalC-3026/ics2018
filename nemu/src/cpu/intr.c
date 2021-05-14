@@ -11,7 +11,7 @@ void raise_intr(uint8_t NO, vaddr_t ret_addr) {
   cpu.eflags.IF = 0;
   rtl_push(&cpu.cs);
   rtl_push(&ret_addr);
-  rtl_li(&t0, vaddr_read(cpu.idtr.limit + NO * 8, 4));
+  rtl_li(&t0, vaddr_read(cpu.idtr.base + NO * 8, 4));
   rtl_li(&t1, vaddr_read(cpu.idtr.base + NO * 8 + 4, 4));
   if((t1 & 0x00008000) == 0)
       assert(0);
