@@ -52,6 +52,7 @@ make_EHelper(iret) {
   decoding.is_jmp = 1;
   rtl_pop(&cpu.cs);
   rtl_pop(&cpu.eflags.val);
+  // decoding.seq_eip = cpu.eip;
   print_asm("iret");
 }
 
