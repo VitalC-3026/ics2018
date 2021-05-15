@@ -21,7 +21,6 @@ static inline _RegSet* sys_write(_RegSet *r) {
       _putc(buf[i]);
     }
     SYSCALL_ARG1(r) = SYSCALL_ARG4(r);
-    
   }
   else {
     panic("Unhandled fd=%d in sys_write.\n", fd);
@@ -37,7 +36,7 @@ _RegSet* do_syscall(_RegSet *r) {
   switch (a[0]) {
     case SYS_none: return sys_none(r);
     case SYS_exit: return sys_exit(r);
-    case SYS_write: return 0;
+    case SYS_write: return sys_write(r);
     default: panic("Unhandled syscall ID = %d", a[0]);
   }
 
