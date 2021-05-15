@@ -37,7 +37,6 @@ void raise_intr(uint8_t NO, vaddr_t ret_addr);
 
 make_EHelper(int) {
   //TODO();
-  // decoding.seq_eip = eip + 4
   raise_intr(id_dest->val, decoding.seq_eip);
   print_asm("int %s", id_dest->str);
 
@@ -52,7 +51,7 @@ make_EHelper(iret) {
   decoding.is_jmp = 1;
   rtl_pop(&cpu.cs);
   rtl_pop(&cpu.eflags.val);
-  // decoding.seq_eip = cpu.eip;
+  decoding.seq_eip = cpu.eip; // iret QA
   print_asm("iret");
 }
 
