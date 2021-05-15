@@ -23,7 +23,10 @@ static inline _RegSet* sys_write(_RegSet *r) {
     SYSCALL_ARG1(r) = SYSCALL_ARG4(r);
     
   }
-  SYSCALL_ARG1(r) = -1;
+  else {
+    panic("Unhandled fd=%d in sys_write.\n", fd);
+    SYSCALL_ARG1(r) = -1;
+  }
   return NULL; 
 }
 
