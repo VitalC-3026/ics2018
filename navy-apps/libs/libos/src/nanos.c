@@ -35,9 +35,11 @@ static intptr_t brk = (intptr_t)&_end;
 void *_sbrk(intptr_t increment){
   intptr_t old_brk = brk;
   intptr_t new_brk = old_brk + increment;
+  char buf1[10];
+    sprintf(buf1, "sbrk1");
   if (_syscall_(SYS_brk, new_brk, 0, 0) == 0) {
-    char buf[10];
-    sprintf(buf, "sbrk");
+    char buf2[10];
+    sprintf(buf2, "sbrk2");
     brk = new_brk;
     return (void *)old_brk;
   }
