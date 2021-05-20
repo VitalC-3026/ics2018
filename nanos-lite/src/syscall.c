@@ -26,11 +26,12 @@ static inline _RegSet* sys_write(_RegSet *r) {
     panic("Unhandled fd=%d in sys_write.\n", fd);
     SYSCALL_ARG1(r) = -1;
   }
+  Log("!");
   return NULL; 
 }
 
 static inline _RegSet* sys_brk(_RegSet* r){
-  SYSCALL_ARG1(r) = 0;
+  //SYSCALL_ARG1(r) = 0;
   return NULL;
 }
 
