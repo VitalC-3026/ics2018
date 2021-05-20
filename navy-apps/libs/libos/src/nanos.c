@@ -1,5 +1,6 @@
 #include <unistd.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <assert.h>
@@ -35,7 +36,8 @@ void *_sbrk(intptr_t increment){
   intptr_t old_brk = brk;
   intptr_t new_brk = old_brk + increment;
   if (_syscall_(SYS_brk, new_brk, 0, 0) == 0) {
-    sprintf("sbrk");
+    char buf[10];
+    sprintf(buf, "sbrk");
     brk = new_brk;
     return (void *)old_brk;
   }
