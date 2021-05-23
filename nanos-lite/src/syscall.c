@@ -94,7 +94,7 @@ _RegSet* do_syscall(_RegSet *r) {
     case SYS_none: return sys_none(r);
     case SYS_exit: return sys_exit(r);
     case SYS_brk: return sys_brk(r);
-    case SYS_write: return sys_fwrite(r);
+    case SYS_write: return sys_write(r);
     case SYS_read: return sys_fread(r);
     case SYS_open: return sys_fopen(r);
     case SYS_close: return sys_fclose(r);
