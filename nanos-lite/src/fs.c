@@ -77,6 +77,8 @@ size_t fs_write(int fd, const void* buf, size_t len) {
   if(fs_filesz(fd) < len + file_table[fd].open_offset) {
     len = fs_filesz(fd) - file_table[fd].open_offset;
   }
+  // TODO-ADD
+  int offset = file_table[fd].open_offset + file_table[fd].disk_offset;
   switch(fd) {
     case FD_STDIN:
       return 0;
@@ -93,11 +95,11 @@ size_t fs_write(int fd, const void* buf, size_t len) {
       break;
     }
     default: {
-      ramdisk_write(buf, file_table[fd].open_offset + file_table[fd].disk_offset, len);
+      ramdisk_write(buf, offset, len);
       file_table[fd].open_offset += len;
     }
   }
-  //Log("Write: file %s, open_off %d, disk_off %d, len %d.\n", file_table[fd].name, file_table[fd].open_offset, file_table[fd].disk_offset, len);
+  Log("Write: file %s, open_off %d, disk_off %d, len %d.\n", file_table[fd].name, file_table[fd].open_offset, file_table[fd].disk_offset, len);
   return len;
 }
 
