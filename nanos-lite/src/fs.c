@@ -88,6 +88,7 @@ size_t fs_write(int fd, const void* buf, size_t len) {
       for(int i = 0; i < len; i++) {
         _putc(((char *)buf)[i]);
       }
+      Log("Write buf: %s.\n", buf);
       break;
     }
     case FD_STDERR: {
@@ -101,6 +102,7 @@ size_t fs_write(int fd, const void* buf, size_t len) {
       file_table[fd].open_offset += len;
     }
   }
+  
   Log("Write: file %s, open_off %d, disk_off %d, len %d.\n", file_table[fd].name, file_table[fd].open_offset, file_table[fd].disk_offset, len);
   return len;
 }
