@@ -76,6 +76,7 @@ size_t fs_read(int fd, void* buf, size_t len) {
 }
 
 size_t fs_write(int fd, const void* buf, size_t len) {
+  Log("len %d.\n", len);
   if(fs_filesz(fd) < len + file_table[fd].open_offset) {
     len = fs_filesz(fd) - file_table[fd].open_offset;
   }
