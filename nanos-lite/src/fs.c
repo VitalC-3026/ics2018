@@ -80,7 +80,12 @@ size_t fs_write(int fd, const void* buf, size_t len) {
   switch(fd) {
     case FD_STDIN:
       return 0;
-    case FD_STDOUT:
+    case FD_STDOUT: {
+      for(int i = 0; i < len; i++) {
+        _putc(((char *)buf)[i]);
+      }
+      break;
+    }
     case FD_STDERR: {
       for(int i = 0; i < len; i++) {
         _putc(((char *)buf)[i]);
@@ -92,7 +97,7 @@ size_t fs_write(int fd, const void* buf, size_t len) {
       file_table[fd].open_offset += len;
     }
   }
-  Log("Write: file %s, open_off %d, disk_off %d, len %d.\n", file_table[fd].name, file_table[fd].open_offset, file_table[fd].disk_offset, len);
+  //Log("Write: file %s, open_off %d, disk_off %d, len %d.\n", file_table[fd].name, file_table[fd].open_offset, file_table[fd].disk_offset, len);
   return len;
 }
 
