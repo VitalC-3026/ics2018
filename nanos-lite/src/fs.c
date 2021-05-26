@@ -53,9 +53,6 @@ int fs_close(int fd) {
 
 size_t fs_read(int fd, void* buf, size_t len) {
    // size? offset? <=> len
-  if(fs_filesz(fd) < len + file_table[fd].open_offset) {
-    len = fs_filesz(fd) - file_table[fd].open_offset;
-  }
   int offset = file_table[fd].disk_offset + file_table[fd].open_offset;
   switch(fd){
     case FD_STDIN:
@@ -66,6 +63,9 @@ size_t fs_read(int fd, void* buf, size_t len) {
       return 0;
     case FD_EVENTS:
     default: {
+      if(fs_filesz(fd) < len + file_table[fd].open_offset) {
+        len = fs_filesz(fd) - file_table[fd].open_offset;
+      }
       ramdisk_read(buf, offset, len);
       file_table[fd].open_offset += len;
       break;
@@ -76,10 +76,6 @@ size_t fs_read(int fd, void* buf, size_t len) {
 }
 
 size_t fs_write(int fd, const void* buf, size_t len) {
-  Log("len %d.\n", len);
-  if(fs_filesz(fd) < len + file_table[fd].open_offset) {
-    len = fs_filesz(fd) - file_table[fd].open_offset;
-  }
   Log("len %d.\n", len);
   // TODO-ADD
   int offset = file_table[fd].open_offset + file_table[fd].disk_offset;
@@ -100,6 +96,9 @@ size_t fs_write(int fd, const void* buf, size_t len) {
       break;
     }
     default: {
+      if(fs_filesz(fd) < len + file_table[fd].open_offset) {
+        len = fs_filesz(fd) - file_table[fd].open_offset;
+      }
       ramdisk_write(buf, offset, len);
       file_table[fd].open_offset += len;
     }
