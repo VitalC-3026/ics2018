@@ -11,7 +11,7 @@ size_t fs_filesz(int fd);
 size_t fs_read(int fd, void *buf, size_t len);
 int fs_close(int fd);
 
-const char filename[] = "/bin/text";
+
 
 uintptr_t loader(_Protect *as, const char *filename) {
   //TODO();
@@ -20,6 +20,7 @@ uintptr_t loader(_Protect *as, const char *filename) {
   // ramdisk_read(DEFAULT_ENTRY, 0, len);
   // return (uintptr_t)DEFAULT_ENTRY;
   // raw filesystem loader
+  // LOg("filename: %s.\n", filename);
   int fd = fs_open(filename, 0, 0);
   size_t size = fs_filesz(fd);
   fs_read(fd, DEFAULT_ENTRY, size);

@@ -29,8 +29,8 @@ int main() {
 #endif
 
   init_fs();
-
-  uint32_t entry = loader(NULL, NULL);
+  const char filename[] = "/bin/text";
+  uint32_t entry = loader(NULL, filename);
   ((void (*)(void))entry)();
 
   panic("Should not reach here");
