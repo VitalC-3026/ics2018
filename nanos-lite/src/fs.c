@@ -29,6 +29,8 @@ extern _Screen _screen;
 void dispinfo_read(void *buf, off_t offset, size_t len);
 void fb_write(const void *buf, off_t offset, size_t len);
 
+extern size_t events_read(void *buf, size_t len);
+
 void init_fs() {
   // TODO: initialize the size of /dev/fb
   file_table[FD_FB].size = _screen.height * _screen.width * 4;
@@ -73,7 +75,10 @@ size_t fs_read(int fd, void* buf, size_t len) {
       file_table[fd].open_offset += len;
       break;
     }
-    case FD_EVENTS:
+    case FD_EVENTS: {
+      len = events_read(buf, len);
+      break;
+    }
     default: {
       if(fs_filesz(fd) <= len + file_table[fd].open_offset) {
         len = fs_filesz(fd) - file_table[fd].open_offset;
