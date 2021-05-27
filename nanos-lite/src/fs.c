@@ -106,9 +106,9 @@ size_t fs_write(int fd, const void* buf, size_t len) {
       break;
     }
     case FD_FB: {
-      if(fs_filesz(fd) < len + file_table[fd].open_offset) {
-        len = fs_filesz(fd) - file_table[fd].open_offset;
-      }
+      // if(fs_filesz(fd) < len + file_table[fd].open_offset) {
+      //   len = fs_filesz(fd) - file_table[fd].open_offset;
+      // }
       fb_write(buf, file_table[fd].open_offset, len);
       file_table[fd].open_offset += len;
       break;
