@@ -124,7 +124,7 @@ int NDL_WaitEvent(NDL_Event *event) {
   assert(0);
   return -1;
 }
-
+size_t fs_write(int fd, const void* buf, size_t len);
 static void get_display_info() {
   FILE *dispinfo = fopen("/proc/dispinfo", "r");
   assert(dispinfo);
@@ -134,7 +134,9 @@ static void get_display_info() {
     *(delim = strchr(buf, ':')) = '\0';
     sscanf(buf, "%s", key);
     sscanf(delim + 1, "%s", value);
-    printf("key: %s.\tvalue: %s.", key, value);
+    char buffer[128];
+    sprintf(buffer, "key: %s.\tvalue: %s.", key, value);
+    fs_write(1, buffer, strlen(buffer));
     if (strcmp(key, "WIDTH") == 0) sscanf(value, "%d", &screen_w);
     if (strcmp(key, "HEIGHT") == 0) sscanf(value, "%d", &screen_h);
   }
