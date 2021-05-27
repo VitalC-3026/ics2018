@@ -8,7 +8,7 @@ static const char *keyname[256] __attribute__((used)) = {
   _KEYS(NAME)
 };
 
-// extern _Screen _screen;
+extern _Screen _screen;
 
 size_t events_read(void *buf, size_t len) {
   return 0;
@@ -50,5 +50,6 @@ void init_device() {
 
   // TODO: print the string to array `dispinfo` with the format
   // described in the Navy-apps convention
-  sprintf(dispinfo, "WIDTH:%d\tHEIGHT:%d\t", _screen.width, _screen.height);
+  Log("WIDTH:%d\tHEIGHT:%d.", _screen.width, _screen.height);
+  sprintf(dispinfo, "WIDTH:%d\nHEIGHT:%d\n", _screen.width, _screen.height);
 }
