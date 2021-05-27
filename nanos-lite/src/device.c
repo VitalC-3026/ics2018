@@ -8,7 +8,7 @@ static const char *keyname[256] __attribute__((used)) = {
   _KEYS(NAME)
 };
 
-extern _Screen _screen;
+// extern _Screen _screen;
 
 size_t events_read(void *buf, size_t len) {
   return 0;
