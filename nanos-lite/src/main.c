@@ -29,7 +29,7 @@ int main() {
 #endif
 
   init_fs();
-  const char filename[] = "/bin/events";
+  const char filename[] = "/bin/bmptest";
   uint32_t entry = loader(NULL, filename);
   ((void (*)(void))entry)();
 
