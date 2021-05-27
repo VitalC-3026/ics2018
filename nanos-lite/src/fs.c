@@ -39,7 +39,7 @@ size_t fs_filesz(int fd){
 }
 
 int fs_open(const char* pathname, int flags, int mode) {
-  Log("Pathname: %s.\n", pathname);
+  Log("Pathname: %s.", pathname);
   for(int i = 0; i < NR_FILES; i++) {
     if (strcmp(pathname, file_table[i].name) == 0){
       // TODO-ADD
@@ -66,9 +66,9 @@ size_t fs_read(int fd, void* buf, size_t len) {
     case FD_STDERR:
       return 0;
     case FD_DISPINFO: {
-      if(fs_filesz(fd) < len + file_table[fd].open_offset) {
-        len = fs_filesz(fd) - file_table[fd].open_offset;
-      }
+      // if(fs_filesz(fd) < len + file_table[fd].open_offset) {
+      //   len = fs_filesz(fd) - file_table[fd].open_offset;
+      // }
       dispinfo_read(buf, file_table[fd].open_offset, len);
       file_table[fd].open_offset += len;
     }
