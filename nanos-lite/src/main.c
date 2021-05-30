@@ -29,7 +29,7 @@ int main() {
 #endif
 
   init_fs();
-  const char filename[] = "/bin/pal";
+  const char filename[] = "/bin/dummy";
   uint32_t entry = loader(NULL, filename);
   ((void (*)(void))entry)();
 
