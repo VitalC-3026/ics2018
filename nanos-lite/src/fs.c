@@ -59,6 +59,7 @@ int fs_close(int fd) {
 
 size_t fs_read(int fd, void* buf, size_t len) {
    // size? offset? <=> len
+  Log("fread");
   int offset = file_table[fd].disk_offset + file_table[fd].open_offset;
   switch(fd){
     case FD_STDIN:
@@ -93,7 +94,7 @@ size_t fs_read(int fd, void* buf, size_t len) {
 }
 
 size_t fs_write(int fd, const void* buf, size_t len) {
-  //Log("len %d.\n", len);
+  Log("fwrite");
   // TODO-ADD
   int offset = file_table[fd].open_offset + file_table[fd].disk_offset;
   switch(fd) {
@@ -133,6 +134,7 @@ size_t fs_write(int fd, const void* buf, size_t len) {
 }
 
 off_t fs_lseek(int fd, off_t offset, int whence) {
+  Log("fseek");
   off_t res = -1;
   switch (whence)
   {
