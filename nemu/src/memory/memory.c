@@ -74,7 +74,9 @@ void paddr_write(paddr_t addr, int len, uint32_t data) {
 }
 
 uint32_t vaddr_read(vaddr_t addr, int len) {
-  if (((addr+len) & ~0xfff) != (addr & ~0xfff)) {
+  if (((addr+len-1) & ~0xfff) != (addr & ~0xfff)) {
+    printf("va 0x%x\n", addr);
+    printf("eip: 0x%x\n", cpu.eip);
     assert(0);
   }
   else {
@@ -84,7 +86,7 @@ uint32_t vaddr_read(vaddr_t addr, int len) {
 }
 
 void vaddr_write(vaddr_t addr, int len, uint32_t data) {
-  if (((addr+len) & ~0xfff) != (addr & ~0xfff)) {
+  if (((addr+len-1) & ~0xfff) != (addr & ~0xfff)) {
     assert(0);
   }
   else {
