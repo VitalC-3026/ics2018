@@ -71,6 +71,7 @@ uint32_t vaddr_read(vaddr_t addr, int len) {
       paddr_t paddr = page_translate(addr+i, false);
       data += (paddr_read(paddr, 1)) << 8*i;  // small endian
     }
+    return data;
   }
   else {
     paddr_t paddr = page_translate(addr, false);
