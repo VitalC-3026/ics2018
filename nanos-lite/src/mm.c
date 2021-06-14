@@ -17,6 +17,20 @@ void free_page(void *p) {
 
 /* The brk() system call handler. */
 int mm_brk(uint32_t new_brk) {
+  if(current->cur_brk == 0) {
+    current->cur_brk = current->max_brk = new_brk;
+  }
+  else {
+    if (new_brk > current->max_brk) {
+      uintptr_t va = ((((uint32_t)current->max_brk)+0xfff) & ~0xfff);
+      // 4K aligned: (a+4K)[32:12] => 与current->max_brk不同的一个4K块
+      for (; va < new_brk; va += PGSIZE) {
+        _map(&current->as, (void*)va, (void*)new_page());
+      }
+      current->max_brk = new_brk;
+    }
+    current->cur_brk = new_brk;
+  }
   return 0;
 }
 
