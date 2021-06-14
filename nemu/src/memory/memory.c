@@ -74,13 +74,13 @@ void paddr_write(paddr_t addr, int len, uint32_t data) {
 }
 
 uint32_t vaddr_read(vaddr_t addr, int len) {
-  if ((((addr)+(len)-1) & ~PAGE_MASK) != ((addr) & ~PAGE_MASK)) {
-    // ((addr+len-1) & ~0xfff) != (addr & ~0xfff)
-    printf("va 0x%x\n", addr);
-    // printf("eip: 0x%x\n", cpu.eip);
-    // printf("len %d\n", len);
-    printf("va+len 0x%x\n", addr+len);
-    assert(0);
+  if (((addr+len-1) & ~PAGE_MASK) != (addr & ~PAGE_MASK)) {
+    // now deal with data crossing the page boundary
+    uint32_t data;
+    for(int i = 0; i < len; i++) {
+      paddr_t paddr = page_translate(addr+i, false);
+      data += (paddr_read(paddr, 1)) << 8*i;  // small endian
+    }
   }
   else {
     paddr_t paddr = page_translate(addr, false);
@@ -90,8 +90,10 @@ uint32_t vaddr_read(vaddr_t addr, int len) {
 
 void vaddr_write(vaddr_t addr, int len, uint32_t data) {
   if (((addr+len-1) & ~0xfff) != (addr & ~0xfff)) {
-    // ((addr+len-1) & ~0xfff) != (addr & ~0xfff)
-    assert(0);
+    for(int i = 0; i < len; i++) {
+      paddr_t paddr = page_translate(addr+i, true);
+      paddr_write(paddr, 1, data>>8*i);
+    }
   }
   else {
     paddr_t paddr = page_translate(addr, true);
