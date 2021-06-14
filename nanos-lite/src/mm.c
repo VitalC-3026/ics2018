@@ -22,7 +22,7 @@ int mm_brk(uint32_t new_brk) {
   }
   else {
     if (new_brk > current->max_brk) {
-      uintptr_t va = ((((uint32_t)current->max_brk)+0xfff) & ~0xfff);
+      uintptr_t va = ((current->max_brk+0xfff) & ~0xfff);
       // 4K aligned: (a+4K)[32:12] => 与current->max_brk不同的一个4K块
       for (; va < new_brk; va += PGSIZE) {
         _map(&current->as, (void*)va, (void*)new_page());
