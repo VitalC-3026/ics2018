@@ -35,7 +35,7 @@ uintptr_t loader(_Protect *as, const char *filename) {
     //Log("%d", len);
     fs_read(fd, pa, len);
     va += PGSIZE;
-    size -= PGSIZE;
+    size -= len;
   }
   //fs_read(fd, DEFAULT_ENTRY, size);
   fs_close(fd);
