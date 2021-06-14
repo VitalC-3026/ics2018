@@ -35,7 +35,7 @@ paddr_t page_translate(vaddr_t addr, bool write) {
     pde.accessed = 1;
     ptdir = (PTE*)(PTE_ADDR(pde.val));
     pte.val = paddr_read((paddr_t)&ptdir[PTX(addr)], 4);
-    Assert(pte.present, "pte.val: 0x%x", pte.val);
+    Assert(pte.present, "ptdir:0x%x, pte.val: 0x%x, addr: 0x%x", *ptdir, pte.val, addr);
     pte.accessed = 1;
     pte.dirty = write ? 1 : pte.dirty;
     return PTE_ADDR(pte.val) | OFF(addr);
