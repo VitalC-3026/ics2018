@@ -24,11 +24,9 @@ uintptr_t loader(_Protect *as, const char *filename) {
   // return (uintptr_t)DEFAULT_ENTRY;
   // raw filesystem loader
   // Log("filename: %s.", filename);
-
   int fd = fs_open(filename, 0, 0);
   int size = fs_filesz(fd);
   void *pa, *va = DEFAULT_ENTRY;
-  fs_read(fd, DEFAULT_ENTRY, size);
   Log("filename: %s, filesize: %d.", filename, size);
   while(size > 0) {
     pa = new_page();
