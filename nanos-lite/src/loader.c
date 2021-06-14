@@ -27,10 +27,13 @@ uintptr_t loader(_Protect *as, const char *filename) {
   int fd = fs_open(filename, 0, 0);
   size_t size = fs_filesz(fd);
   void *pa, *va = DEFAULT_ENTRY;
+  Log("filename: %s, filesize: %d.\n", filename, size);
   while(size > 0) {
     pa = new_page();
     _map(as, va, pa);
-    fs_read(fd, pa, PGSIZE);
+    size_t len = size > PGSIZE ? PGSIZE:size;
+    Log("%d", len);
+    fs_read(fd, pa, len);
     va += PGSIZE;
     size -= PGSIZE;
   }

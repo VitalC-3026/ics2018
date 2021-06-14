@@ -58,8 +58,7 @@ int fs_close(int fd) {
 }
 
 size_t fs_read(int fd, void* buf, size_t len) {
-   // size? offset? <=> len
-  Log("fread");
+  // size? offset? <=> len
   int offset = file_table[fd].disk_offset + file_table[fd].open_offset;
   switch(fd){
     case FD_STDIN:
