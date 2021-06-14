@@ -77,8 +77,9 @@ uint32_t vaddr_read(vaddr_t addr, int len) {
   if ((((addr)+(len)-1) & ~PAGE_MASK) != ((addr) & ~PAGE_MASK)) {
     // ((addr+len-1) & ~0xfff) != (addr & ~0xfff)
     printf("va 0x%x\n", addr);
-    printf("eip: 0x%x\n", cpu.eip);
-    printf("len %d\n", len);
+    // printf("eip: 0x%x\n", cpu.eip);
+    // printf("len %d\n", len);
+    printf("va+len 0x%x\n", addr+len);
     assert(0);
   }
   else {
