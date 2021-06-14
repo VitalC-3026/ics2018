@@ -25,7 +25,7 @@ uintptr_t loader(_Protect *as, const char *filename) {
   // raw filesystem loader
   // Log("filename: %s.", filename);
   int fd = fs_open(filename, 0, 0);
-  size_t size = fs_filesz(fd);
+  int size = fs_filesz(fd);
   void *pa, *va = DEFAULT_ENTRY;
   Log("filename: %s, filesize: %d.", filename, size);
   while(size > 0) {
