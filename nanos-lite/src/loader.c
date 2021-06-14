@@ -23,15 +23,15 @@ uintptr_t loader(_Protect *as, const char *filename) {
   // ramdisk_read(DEFAULT_ENTRY, 0, len);
   // return (uintptr_t)DEFAULT_ENTRY;
   // raw filesystem loader
-  // Log("filename: %s.\n", filename);
+  // Log("filename: %s.", filename);
   int fd = fs_open(filename, 0, 0);
   size_t size = fs_filesz(fd);
   void *pa, *va = DEFAULT_ENTRY;
-  Log("filename: %s, filesize: %d.\n", filename, size);
+  Log("filename: %s, filesize: %d.", filename, size);
   while(size > 0) {
     pa = new_page();
     _map(as, va, pa);
-    size_t len = size > PGSIZE ? PGSIZE:size;
+    size_t len = size >= PGSIZE ? PGSIZE:size;
     //Log("%d", len);
     fs_read(fd, pa, len);
     va += PGSIZE;
