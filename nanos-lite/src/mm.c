@@ -4,6 +4,7 @@
 static void *pf = NULL;
 
 void* new_page(void) {
+  Log("0x%x, 0x%x", pf, (void*)_heap.end);
   assert(pf < (void *)_heap.end);
   void *p = pf;
   pf += PGSIZE;
