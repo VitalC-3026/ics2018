@@ -28,7 +28,7 @@ paddr_t page_translate(vaddr_t addr, bool write) {
   PDE pde, *pgdir;
   PTE pte, *ptdir;
   if (cpu.cr0.protect_enable && cpu.cr0.paging) {
-    //printf("0x%x", addr);
+    printf("0x%x", addr);
     pgdir = (PDE*)(PTE_ADDR(cpu.cr3.val));
     pde.val = paddr_read((paddr_t) &pgdir[PDX(addr)], 4);
     Assert(pde.present, "pde.val: 0x%x", pde.val);
@@ -66,7 +66,7 @@ void paddr_write(paddr_t addr, int len, uint32_t data) {
 uint32_t vaddr_read(vaddr_t addr, int len) {
   if (((addr+len-1) & ~PAGE_MASK) != (addr & ~PAGE_MASK)) {
     // now deal with data crossing the page boundary
-    uint32_t data;
+    uint32_t data = 0;
     for(int i = 0; i < len; i++) {
       paddr_t paddr = page_translate(addr+i, false);
       data += (paddr_read(paddr, 1)) << 8*i;  // small endian
