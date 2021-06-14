@@ -32,7 +32,7 @@ uintptr_t loader(_Protect *as, const char *filename) {
     pa = new_page();
     _map(as, va, pa);
     size_t len = size >= PGSIZE ? PGSIZE:size;
-    Log("%d", size);
+    Log("%d, %d", len, size);
     fs_read(fd, pa, len);
     va += PGSIZE;
     size -= PGSIZE;
