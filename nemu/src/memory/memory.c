@@ -25,24 +25,13 @@ uint8_t pmem[PMEM_SIZE];
 #define PTE_A     0x020     // Accessed
 #define PTE_D     0x040     // Dirty
 paddr_t page_translate(vaddr_t addr, bool write) {
-  PDE pde;
+  PDE pde, *pgdir;
   PTE pte, *ptdir;
   if (cpu.cr0.protect_enable && cpu.cr0.paging) {
-    PDE *pgdir = (PDE*)(PTE_ADDR(cpu.cr3.val));
+    pgdir = (PDE*)(PTE_ADDR(cpu.cr3.val));
     pde.val = paddr_read((paddr_t) &pgdir[PDX(addr)], 4);
-    // PDE pde = paddr_read((paddr_t) &pgdir[PDX(addr)], 4);
-    // assert(pde & PTE_P);
     Assert(pde.present, "pde.val: 0x%x", pde.val);
     pde.accessed = 1;
-    // pde = pde | PTE_A;
-    // ptdir = (PTE*)(PTE_ADDR(pde));
-    // pte = paddr_read((paddr_t) &ptdir[PTX(addr)], 4);
-    // assert(pte & PTE_P);
-    // pte = pte | PTE_A;
-    // if (write) {
-    //   pte = pte | PTE_D;
-    // }
-    // return PTE_ADDR(pte) | OFF(addr);
     ptdir = (PTE*)(PTE_ADDR(pde.val));
     pte.val = paddr_read((paddr_t)&ptdir[PTX(addr)], 4);
     assert(pte.present);
