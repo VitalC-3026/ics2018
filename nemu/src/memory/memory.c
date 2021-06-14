@@ -32,7 +32,7 @@ paddr_t page_translate(vaddr_t addr, bool write) {
     pde.val = paddr_read((paddr_t) &pgdir[PDX(addr)], 4);
     // PDE pde = paddr_read((paddr_t) &pgdir[PDX(addr)], 4);
     // assert(pde & PTE_P);
-    assert(pde.present);
+    Assert(pde.present, "pde.val: 0x%x", pde.val);
     pde.accessed = 1;
     // pde = pde | PTE_A;
     // ptdir = (PTE*)(PTE_ADDR(pde));
