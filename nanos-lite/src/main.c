@@ -30,10 +30,10 @@ int main() {
 #endif
 
   init_fs();
-  const char filename[] = "/bin/pal";
+  //const char filename[] = "";
   // uint32_t entry = loader(NULL, filename);
   // ((void (*)(void))entry)();
-  load_prog(filename);
+  load_prog("/bin/pal");
   load_prog("/bin/hello");
   _trap();
   panic("Should not reach here");
